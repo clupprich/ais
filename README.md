@@ -1,6 +1,6 @@
 # Ais
 
-An elixir package that encodes AIS messages. This project is still under development.
+An elixir package that decodes/encodes AIS messages. This project is still under development.
 
 ## Installation
 

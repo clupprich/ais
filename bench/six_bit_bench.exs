@@ -3,7 +3,7 @@ defmodule SixBitBench do
 
   @ais "14eG;o@034o8sd<L9i:a;WF>062D"
 
-  bench "encode" do
-    SixBit.encode(@ais)
+  bench "decode" do
+    SixBit.decode(@ais)
   end
 end

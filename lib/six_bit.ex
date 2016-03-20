@@ -1,17 +1,17 @@
 defmodule SixBit do
-  def encode(string) when is_binary(string) do
+  def decode(string) when is_binary(string) do
     to_char_list(string)
-      |> encode
+      |> decode
   end
 
   @doc """
-  
+
   Examples:
 
-  iex> SixBit.encode('14eG')
+  iex> SixBit.decode('14eG')
   <<4, 75, 87>>
   """
-  def encode(list) when is_list(list) do
+  def decode(list) when is_list(list) do
     Enum.map(list, &convert/1)
       |> :erlang.list_to_bitstring
   end
