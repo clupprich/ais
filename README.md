@@ -17,3 +17,6 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
         def application do
           [applications: [:ais]]
         end
+        
+## Code Status
+[![Build Status](https://travis-ci.org/clupprich/ais.svg?branch=master)](https://travis-ci.org/clupprich/ais)
