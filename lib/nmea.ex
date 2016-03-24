@@ -4,7 +4,7 @@ defmodule Nmea do
 
   Examples:
   iex> Nmea.parse("!AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0*5C")
-  [talker: "!AI", formatter: "VDM", current: "1", total: "1", sequential: "", channel: "B", payload: "177KQJ5000G?tO`K>RA1wUbN0TKH", padding: "0", checksum: "5C"]
+  [talker: "!AI", formatter: "VDM", total: "1", current: "1", sequential: "", channel: "B", payload: "177KQJ5000G?tO`K>RA1wUbN0TKH", padding: "0", checksum: "5C"]
 
   iex> Nmea.parse("$GPGLL,5133.81,N,00042.25,W*75")
   [talker: "$GP", formatter: "GLL", latitude: "5133.81", north_south: "N", longitude: "00042.25", east_west: "W", checksum: "75"]
@@ -19,7 +19,7 @@ defmodule Nmea do
 
   # Decode !AIVDM messages
   def decode(talker, formatter, values) when talker == "!AI" and formatter == "VDM" do
-    keys = [:talker, :formatter, :current, :total, :sequential, :channel, :payload, :padding_checksum]
+    keys = [:talker, :formatter, :total, :current, :sequential, :channel, :payload, :padding_checksum]
     checksum(Enum.zip(keys, values), :padding)
   end
 
