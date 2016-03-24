@@ -14,14 +14,16 @@ defmodule Nmea do
     {talker, formatter} = String.split_at(List.first(values), 3)
     values = Enum.concat([talker, formatter], List.delete_at(values, 0))
 
-    decode(List.first(values), Enum.at(values, 1), values)
+    decode(Enum.at(values, 0), Enum.at(values, 1), values)
   end
 
+  # Decode !AIVDM messages
   def decode(talker, formatter, values) when talker == "!AI" and formatter == "VDM" do
     keys = [:talker, :formatter, :current, :total, :sequential, :channel, :payload, :padding_checksum]
     checksum(Enum.zip(keys, values), :padding)
   end
 
+  # Decode $GPGLL messages
   def decode(talker, formatter, values) when talker == "$GP" and formatter == "GLL"  do
     keys = [:talker, :formatter, :latitude, :north_south, :longitude, :east_west_checksum]
     checksum(Enum.zip(keys, values), :east_west)
