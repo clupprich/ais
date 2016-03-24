@@ -1,5 +1,5 @@
 defmodule SixBitTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest SixBit
 
   test "decode payload" do

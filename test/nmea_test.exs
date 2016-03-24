@@ -1,5 +1,5 @@
 defmodule NmeaTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest Nmea
 
   test "parse single-sentence" do
