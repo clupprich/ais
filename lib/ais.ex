@@ -11,8 +11,8 @@ defmodule Ais do
         {:ok, sentence}
 
       sentence[:total] == sentence[:current] ->
-        [first_sentence|tail] = Agent.get(pid, fn(list) -> list end)
-        {ok, sentence} = Keyword.get_and_update(sentence, :payload, fn(payload) -> {payload, first_sentence[:payload] <> payload} end)
+        [first_sentence|_tail] = Agent.get(pid, fn(list) -> list end)
+        {_, sentence} = Keyword.get_and_update(sentence, :payload, fn(payload) -> {payload, first_sentence[:payload] <> payload} end)
         {:ok, sentence}
 
       true ->
