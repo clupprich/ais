@@ -38,12 +38,16 @@ defmodule SixBit do
   Examples:
   iex> SixBit.get_string(1584874876404, 42)
   "WDA9674"
+
+  iex> SixBit.get_string(276724096922795722993303089619927040, 120)
+  "MT.MITCHELL"
   """
   def get_string(value, length) do
     chunks(<<value::size(length)>>, 6)
       |> Enum.map(&bitstring_to_binary/1)
       |> Enum.map(&get_character/1)
       |> Enum.join
+      |> String.replace("@", "")
   end
 
   @doc """
