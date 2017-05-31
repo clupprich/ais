@@ -24,6 +24,7 @@ defmodule AisTest do
        message_id: 5, ais_version_indicator: 0, imo_number: 6710932, repeat_indicator: 0, user_id: 369190000,
        call_sign: "WDA9674", type_of_ship_and_cargo_type: 99, type_of_electronic_position_fixing_devise: 1,
        eta: 70144, maximum_present_static_draught: 60, destination: "SEATTLE", name: "MT.MITCHELL",
+       dimension_a: 90, dimension_b: 90, dimension_c: 10, dimension_d: 10, dte: 0, spare: 0,
        payload: "55P5TL01VIaAL@7WKO@mBplU@<PDhh000000001S;AJ::4A80?4i@E531@0000000000000", padding: "2",
        checksum: "55"}}
   end
