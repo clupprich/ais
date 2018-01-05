@@ -7,7 +7,7 @@ defmodule SixBit do
   <<4, 75, 87>>
   """
   def decode(string) when is_binary(string) do
-    to_char_list(string)
+    to_charlist(string)
       |> decode
   end
 
