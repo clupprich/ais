@@ -1,4 +1,4 @@
-defmodule Ais.Mixfile do
+defmodule AIS.Mixfile do
   use Mix.Project
 
   def project do

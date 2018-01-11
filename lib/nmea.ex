@@ -1,12 +1,12 @@
-defmodule Nmea do
+defmodule NMEA do
   @doc """
   Parses an NMEA sentence and returns a `Map`.
 
   Examples:
-  iex> Nmea.parse("!AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0*5C")
+  iex> NMEA.parse("!AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0*5C")
   %{talker: "!AI", formatter: "VDM", total: "1", current: "1", sequential: "", channel: "B", payload: "177KQJ5000G?tO`K>RA1wUbN0TKH", padding: "0", checksum: "5C"}
 
-  iex> Nmea.parse("$GPGLL,5133.81,N,00042.25,W*75")
+  iex> NMEA.parse("$GPGLL,5133.81,N,00042.25,W*75")
   %{talker: "$GP", formatter: "GLL", latitude: "5133.81", north_south: "N", longitude: "00042.25", east_west: "W", checksum: "75"}
   """
   def parse(string) when is_binary(string) do

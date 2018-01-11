@@ -1,4 +1,4 @@
-defmodule Ais.Payload do
+defmodule AIS.Payload do
   def parse(payload) do
     payload = SixBit.decode(payload)
 

@@ -1,10 +1,10 @@
-defmodule Ais do
+defmodule AIS do
   def new do
     Agent.start_link(fn -> [] end)
   end
 
   def parse(pid, string) do
-    sentence = Nmea.parse(string)
+    sentence = NMEA.parse(string)
 
     cond do
       sentence[:total] == "1" ->
@@ -14,7 +14,7 @@ defmodule Ais do
         [first_sentence|_tail] = Agent.get(pid, fn(list) -> list end)
         {_, sentence} = Map.get_and_update(sentence, :payload, fn(payload) -> {payload, first_sentence.payload <> payload} end)
 
-        attributes = Ais.Payload.parse(sentence.payload)
+        attributes = AIS.Payload.parse(sentence.payload)
         sentence = Map.merge(attributes, sentence)
 
         {:ok, sentence}
