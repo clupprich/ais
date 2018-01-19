@@ -19,12 +19,22 @@ defmodule NMEA do
 
   # Decode !AIVDM messages
   def decode(talker, formatter, values) when talker == "!AI" and formatter == "VDM" do
-    keys = [:talker, :formatter, :total, :current, :sequential, :channel, :payload, :padding_checksum]
+    keys = [
+      :talker,
+      :formatter,
+      :total,
+      :current,
+      :sequential,
+      :channel,
+      :payload,
+      :padding_checksum
+    ]
+
     checksum(Enum.zip(keys, values), :padding)
   end
 
   # Decode $GPGLL messages
-  def decode(talker, formatter, values) when talker == "$GP" and formatter == "GLL"  do
+  def decode(talker, formatter, values) when talker == "$GP" and formatter == "GLL" do
     keys = [:talker, :formatter, :latitude, :north_south, :longitude, :east_west_checksum]
     checksum(Enum.zip(keys, values), :east_west)
   end

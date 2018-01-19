@@ -8,12 +8,12 @@ defmodule SixBit do
   """
   def decode(string) when is_binary(string) do
     to_charlist(string)
-      |> decode
+    |> decode
   end
 
   def decode(list) when is_list(list) do
     Enum.map(list, &convert/1)
-      |> :erlang.list_to_bitstring
+    |> :erlang.list_to_bitstring()
   end
 
   @doc """
@@ -28,8 +28,8 @@ defmodule SixBit do
   <<17::size(6)>>
   """
   def convert(char) do
-    char6bit = if (char - 48) > 40, do: char - 56, else: char - 48
-    <<char6bit :: size(6)>>
+    char6bit = if char - 48 > 40, do: char - 56, else: char - 48
+    <<char6bit::size(6)>>
   end
 
   @doc """
@@ -44,10 +44,10 @@ defmodule SixBit do
   """
   def get_string(value, length) do
     chunks(<<value::size(length)>>, 6)
-      |> Enum.map(&bitstring_to_binary/1)
-      |> Enum.map(&get_character/1)
-      |> Enum.join
-      |> String.replace("@", "")
+    |> Enum.map(&bitstring_to_binary/1)
+    |> Enum.map(&get_character/1)
+    |> Enum.join()
+    |> String.replace("@", "")
   end
 
   @doc """
@@ -90,6 +90,6 @@ defmodule SixBit do
   end
 
   defp bitstring_to_binary(bitstring) when bit_size(bitstring) == 6 do
-    << <<0::2>>::bitstring, bitstring::bitstring >>
+    <<(<<0::2>>::bitstring), bitstring::bitstring>>
   end
 end
