@@ -9,8 +9,6 @@ defmodule ChecksumTest do
 
       {result, _} = AIS.parse(ais, checksum)
       assert result == expected
-
-      assert AIS.get(ais) == []
     end do
       [
         {"!AIVDM,1,1,,A,H3HOIFTl00000006Gqjhm01p?650,0*4F", :ok},
@@ -33,7 +31,7 @@ defmodule ChecksumTest do
         {"!AIVDM,1,1,,A,13aFf6PP00P0lEDLDKL>4?vjR0RC,0*0B", :ok},
         {"!AIVDM,1,1,,B,13HOI:?P00P0TQBLD;Uh0?vj2@?J,0*01", :ok},
         {"!AIVDM,1,1,,B,13Hbq1?P00P14H0LB20;IOvp26qL,0*01", :ok},
-        {"!AIVDM,2,1,7,B,53HPIH82<K2`IOW;3H1H:0L5<<tLpD000000000l1PI644000031H20ETQ@0,0*0C", :ok},
+        {"!AIVDM,2,1,7,B,53HPIH82<K2`IOW;3H1H:0L5<<tLpD000000000l1PI644000031H20ETQ@0,0*0C", :incomplete},
         {"!AIVDM,1,1,,A,13IMm1301eP02H<LC5C:gpPl0Uih,0*01", :ok},
         {"!AIVDM,1,1,,B,13IbQQ000100lqLLD7DoSA<p80RN,0*02", :ok}
       ]

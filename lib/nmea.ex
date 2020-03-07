@@ -64,6 +64,7 @@ defmodule NMEA do
     |> String.to_charlist
     |> Enum.reduce(0, &bxor/2)
     |> Integer.to_string(16)
+    |> String.pad_leading(2, "0")
   end
 
   def calculate_gpgll_checksum(list) do
@@ -71,6 +72,7 @@ defmodule NMEA do
     |> String.to_charlist
     |> Enum.reduce(0, &bxor/2)
     |> Integer.to_string(16)
+    |> String.pad_leading(2, "0")
   end
 
   @doc """
