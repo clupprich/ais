@@ -119,6 +119,9 @@ defmodule AIS.Payload do
     }
   end
 
+  # Safety related acknowledgement
+  #
+
   # AIS STANDARD CLASS B EQUIPMENT POSITION REPORT (MESSAGE 18)
   # https://www.navcen.uscg.gov/?pageName=AISMessagesB
   # !AIVDM,1,1,,B,B3HOIj000H08MeW52k4F7wo5oP06,0*42
@@ -180,6 +183,20 @@ defmodule AIS.Payload do
       virtual_aton_flag: virtual_aton_flag,
       assigned_mode_flag: assigned_mode_flag,
       spare: spare
+    }
+  end
+
+  # MESSAGE 24: STATIC DATA REPORT (PART A)
+  # https://www.navcen.uscg.gov/?pageName=AISMessagesB
+  # !AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B
+  defp parse_message(message_id, payload) when message_id == 24 do
+    # WARNING: message ID 24 can be two different formats apparently...
+    <<repeat_indicator::2, user_id:: 30, part_number::2, name::120>> = payload
+    %{
+      repeat_indicator: repeat_indicator,
+      user_id: user_id,
+      part_number: part_number,
+      name: SixBit.get_string(name, 120)
     }
   end
 end
