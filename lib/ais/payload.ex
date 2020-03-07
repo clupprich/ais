@@ -220,4 +220,10 @@ defmodule AIS.Payload do
       spare: spare
     }
   end
+
+  # Message 24 part A + B ???
+  # Cannot make it to match any known struct, just return nothing and handle later...
+  defp parse_message(message_id, _payload) when message_id == 24 do
+    %{}
+  end
 end
