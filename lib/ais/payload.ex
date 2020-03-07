@@ -8,6 +8,7 @@ defmodule AIS.Payload do
     Map.merge(%{message_id: message_id}, attributes)
   end
 
+  # Class A AIS Position Report (Messages 1, 2, and 3)
   defp parse_message(message_id, payload)
        when message_id == 1 or message_id == 2 or message_id == 3 do
     <<repeat_indicator::2, user_id::30, navigational_status::4, rate_of_turn::8, sog::10,
@@ -33,6 +34,7 @@ defmodule AIS.Payload do
     }
   end
 
+  # AIS Class A Ship Static And Voyage Related Data (Message 5)
   defp parse_message(message_id, payload) when message_id == 5 do
     <<repeat_indicator::2, user_id::30, ais_version_indicator::2, imo_number::30, call_sign::42,
       name::120, type_of_ship_and_cargo_type::8, dimension_a::9, dimension_b::9, dimension_c::6,
