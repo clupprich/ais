@@ -63,7 +63,6 @@ defmodule NMEA do
     [field, checksum] = String.split(field_and_checksum, "*")
 
     computed_checksum = calculate_checksum(list)
-    IO.puts("checksum #{checksum} computed #{computed_checksum}")
 
     new_list = Keyword.put([checksum: checksum], name, field)
     final_list = Keyword.merge(list, new_list)
