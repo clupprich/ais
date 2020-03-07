@@ -12,7 +12,7 @@ defmodule AIS.Payload do
        when message_id == 1 or message_id == 2 or message_id == 3 do
     <<repeat_indicator::2, user_id::30, navigational_status::4, rate_of_turn::8, sog::10,
       position_accuracy::1, longitude::28, latitude::27, cog::12, true_heading::9, time_stamp::6,
-      special_manoeuvre_indicator::2, spare::3, raim_flag::1, communication_state::19>> = payload
+      special_maneuvre_indicator::2, spare::3, raim_flag::1, communication_state::19>> = payload
 
     %{
       repeat_indicator: repeat_indicator,
@@ -26,7 +26,7 @@ defmodule AIS.Payload do
       cog: cog,
       true_heading: true_heading,
       time_stamp: time_stamp,
-      special_manoeuvre_indicator: special_manoeuvre_indicator,
+      special_maneuvre_indicator: special_maneuvre_indicator,
       spare: spare,
       raim_flag: raim_flag,
       communication_state: communication_state
