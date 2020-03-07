@@ -6,10 +6,10 @@ defmodule NMEA do
 
   Examples:
   iex> NMEA.parse("!AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0*5C")
-  %{talker: "!AI", formatter: "VDM", total: "1", current: "1", sequential: "", channel: "B", payload: "177KQJ5000G?tO`K>RA1wUbN0TKH", padding: "0", checksum: "5C"}
+  {:ok, %{talker: "!AI", formatter: "VDM", total: "1", current: "1", sequential: "", channel: "B", payload: "177KQJ5000G?tO`K>RA1wUbN0TKH", padding: "0", checksum: "5C"}}
 
   iex> NMEA.parse("$GPGLL,5133.81,N,00042.25,W*75")
-  %{talker: "$GP", formatter: "GLL", latitude: "5133.81", north_south: "N", longitude: "00042.25", east_west: "W", checksum: "75"}
+  {:ok, %{talker: "$GP", formatter: "GLL", latitude: "5133.81", north_south: "N", longitude: "00042.25", east_west: "W", checksum: "75"}}
   """
   def parse(string) when is_binary(string) do
     values = String.split(string, ",")
@@ -34,20 +34,40 @@ defmodule NMEA do
       :padding_checksum
     ]
 
-    checksum(Enum.zip(keys, values), :padding)
+    decoded = checksum(Enum.zip(keys, values), :padding)
+    computed_checksum = calculate_aivdm_checksum(decoded)
+    if computed_checksum == decoded[:checksum] do
+      {:ok, decoded}
+    else
+      {:invalid_checksum, decoded}
+    end
   end
 
   # Decode $GPGLL messages
   def decode(talker, formatter, values) when talker == "$GP" and formatter == "GLL" do
     keys = [:talker, :formatter, :latitude, :north_south, :longitude, :east_west_checksum]
-    checksum(Enum.zip(keys, values), :east_west)
+
+    decoded = checksum(Enum.zip(keys, values), :east_west)
+    computed_checksum = calculate_gpgll_checksum(decoded)
+    if computed_checksum == decoded[:checksum] do
+      {:ok, decoded}
+    else
+      {:invalid_checksum, decoded}
+    end
   end
 
   @doc """
   Calculate the checksum
   """
-  def calculate_checksum(list) do
-    "#{String.slice(list[:talker], 1..2)}#{list[:formatter]},#{list[:total]},#{list[:current]},#{list[:sequential]},#{list[:channel]},#{list[:payload]},0"
+  def calculate_aivdm_checksum(list) do
+    "#{String.slice(list[:talker], 1..2)}#{list[:formatter]},#{list[:total]},#{list[:current]},#{list[:sequential]},#{list[:channel]},#{list[:payload]},#{list[:padding]}"
+    |> String.to_charlist
+    |> Enum.reduce(0, &bxor/2)
+    |> Integer.to_string(16)
+  end
+
+  def calculate_gpgll_checksum(list) do
+    "#{String.slice(list[:talker], 1..2)}#{list[:formatter]},#{list[:latitude]},#{list[:north_south]},#{list[:longitude]},#{list[:east_west]}"
     |> String.to_charlist
     |> Enum.reduce(0, &bxor/2)
     |> Integer.to_string(16)
@@ -62,15 +82,7 @@ defmodule NMEA do
     {field_and_checksum, list} = Keyword.pop(list, name_with_checksum)
     [field, checksum] = String.split(field_and_checksum, "*")
 
-    computed_checksum = calculate_checksum(list)
-
     new_list = Keyword.put([checksum: checksum], name, field)
-    final_list = Keyword.merge(list, new_list)
-
-    if computed_checksum == checksum do
-      {:ok, final_list}
-    else
-      {:invalid_checksum, final_list}
-    end
+    Keyword.merge(list, new_list)
   end
 end
