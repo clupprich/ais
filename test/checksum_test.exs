@@ -1,4 +1,4 @@
-defmodule AISTest do
+defmodule ChecksumTest do
   use ExUnit.Case, async: true
   use ExUnit.Parameterized
 
