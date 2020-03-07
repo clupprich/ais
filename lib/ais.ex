@@ -8,6 +8,9 @@ defmodule AIS do
 
     cond do
       sentence[:total] == "1" ->
+        attributes = AIS.Payload.parse(sentence.payload)
+        sentence = Map.merge(attributes, sentence)
+
         {:ok, sentence}
 
       sentence[:total] == sentence[:current] ->
