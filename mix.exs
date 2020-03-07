@@ -29,5 +29,8 @@ defmodule AIS.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
+    [
+      {:ex_parameterized, "~> 1.3.7"}
+    ]
   end
 end

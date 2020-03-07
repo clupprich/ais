@@ -126,7 +126,8 @@ defmodule AIS.Payload do
   # https://www.navcen.uscg.gov/?pageName=AISMessagesB
   # !AIVDM,1,1,,B,B3HOIj000H08MeW52k4F7wo5oP06,0*42
   defp parse_message(message_id, payload) when message_id == 18 do
-    <<repeat_indicator::2, user_id::30, spare1::8, sog::10, position_accuracy::1, longitude::28, latitude::27, cog::12, true_heading::9, time_stamp::6, spare2::2, class_b_unit_flag::1, class_b_display_flag::1, class_b_dsc_flag::1, class_b_message_22_flag::1,
+    <<repeat_indicator::2, user_id::30, spare1::8, sog::10, position_accuracy::1, longitude::28, latitude::27, cog::12, true_heading::9,
+    time_stamp::6, spare2::2, class_b_unit_flag::1, class_b_display_flag::1, class_b_dsc_flag::1, class_b_band_flag::1, class_b_message_22_flag::1,
     mode_flag::1, raim_flag::1, communication_state_selector_flag::1, communication_state::19>> = payload
 
     %{
@@ -144,6 +145,7 @@ defmodule AIS.Payload do
       class_b_unit_flag: class_b_unit_flag,
       class_b_display_flag: class_b_display_flag,
       class_b_dsc_flag: class_b_dsc_flag,
+      class_b_band_flag: class_b_band_flag,
       class_b_message_22_flag: class_b_message_22_flag,
       mode_flag: mode_flag,
       raim_flag: raim_flag,
@@ -188,15 +190,34 @@ defmodule AIS.Payload do
 
   # MESSAGE 24: STATIC DATA REPORT (PART A)
   # https://www.navcen.uscg.gov/?pageName=AISMessagesB
-  # !AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B
-  defp parse_message(message_id, payload) when message_id == 24 do
-    # WARNING: message ID 24 can be two different formats apparently...
-    <<repeat_indicator::2, user_id:: 30, part_number::2, name::120>> = payload
+  # !AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B      Part A
+  defp parse_message(message_id, <<repeat_indicator::2, user_id::30, part_number::2, name::120>>) when message_id == 24 do
+
     %{
       repeat_indicator: repeat_indicator,
       user_id: user_id,
       part_number: part_number,
       name: SixBit.get_string(name, 120)
+    }
+  end
+  # MESSAGE 24: STATIC DATA REPORT (PART B)
+  # !AIVDM,1,1,,A,H3HOIFTl00000006Gqjhm01p?650,0*4F     Part B
+  defp parse_message(message_id, <<repeat_indicator::2, user_id::30, part_number::2, type_of_ship_and_cargo_type::8, vendor_id::42, call_sign::42,
+  dimension_a::9, dimension_b::9, dimension_c::6, dimension_d::6, type_of_electronic_position_fixing_device::4, spare::2>>) when message_id == 24 do
+
+    %{
+      repeat_indicator: repeat_indicator,
+      user_id: user_id,
+      part_number: part_number,
+      type_of_ship_and_cargo_type: type_of_ship_and_cargo_type,
+      vendor_id: vendor_id,
+      call_sign: SixBit.get_string(call_sign, 42),
+      dimension_a: dimension_a,
+      dimension_b: dimension_b,
+      dimension_c: dimension_c,
+      dimension_d: dimension_d,
+      type_of_electronic_position_fixing_device: type_of_electronic_position_fixing_device,
+      spare: spare
     }
   end
 end

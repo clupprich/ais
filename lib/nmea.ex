@@ -1,4 +1,6 @@
 defmodule NMEA do
+  use Bitwise
+
   @doc """
   Parses an NMEA sentence and returns a `Map`.
 
@@ -14,7 +16,9 @@ defmodule NMEA do
     {talker, formatter} = String.split_at(List.first(values), 3)
     values = Enum.concat([talker, formatter], List.delete_at(values, 0))
 
-    Enum.into(decode(Enum.at(values, 0), Enum.at(values, 1), values), %{})
+    {state, decoded} = decode(Enum.at(values, 0), Enum.at(values, 1), values)
+
+    {state, Enum.into(decoded, %{})}
   end
 
   # Decode !AIVDM messages
@@ -40,6 +44,16 @@ defmodule NMEA do
   end
 
   @doc """
+  Calculate the checksum
+  """
+  def calculate_checksum(list) do
+    "#{String.slice(list[:talker], 1..2)}#{list[:formatter]},#{list[:total]},#{list[:current]},#{list[:sequential]},#{list[:channel]},#{list[:payload]},0"
+    |> String.to_charlist
+    |> Enum.reduce(0, &bxor/2)
+    |> Integer.to_string(16)
+  end
+
+  @doc """
   Splits the entry with the key `name` of the keyword `list` and adds it to 'list'.
   """
   def checksum(list, name) do
@@ -47,7 +61,17 @@ defmodule NMEA do
 
     {field_and_checksum, list} = Keyword.pop(list, name_with_checksum)
     [field, checksum] = String.split(field_and_checksum, "*")
+
+    computed_checksum = calculate_checksum(list)
+    IO.puts("checksum #{checksum} computed #{computed_checksum}")
+
     new_list = Keyword.put([checksum: checksum], name, field)
-    Keyword.merge(list, new_list)
+    final_list = Keyword.merge(list, new_list)
+
+    if computed_checksum == checksum do
+      {:ok, final_list}
+    else
+      {:invalid_checksum, final_list}
+    end
   end
 end

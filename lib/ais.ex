@@ -4,9 +4,12 @@ defmodule AIS do
   end
 
   def parse(pid, string) do
-    sentence = NMEA.parse(string)
+    {parse_state, sentence} = NMEA.parse(string)
 
     cond do
+      parse_state == :invalid_checksum ->
+        {parse_state, sentence}
+
       sentence[:total] == "1" ->
         attributes = AIS.Payload.parse(sentence.payload)
         sentence = Map.merge(attributes, sentence)
