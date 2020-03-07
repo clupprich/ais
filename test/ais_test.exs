@@ -16,7 +16,23 @@ defmodule AISTest do
                 channel: "B",
                 payload: "177KQJ5000G?tO`K>RA1wUbN0TKH",
                 padding: "0",
-                checksum: "5C"
+                checksum: "5C",
+                cog: 510,
+                communication_state: 149208,
+                latitude: 28549700,
+                longitude: 195027956,
+                message_id: 1,
+                navigational_status: 5,
+                position_acucuracy: 0,
+                raim_flag: 0,
+                rate_of_turn: 0,
+                repeat_indicator: 0,
+                sog: 0,
+                spare: 0,
+                special_manoeuvre_indicator: 0,
+                time_stamp: 15,
+                true_heading: 181,
+                user_id: 477553000
               }}
 
     assert AIS.get(ais) == []
