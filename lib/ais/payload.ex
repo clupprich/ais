@@ -8,6 +8,10 @@ defmodule AIS.Payload do
     Map.merge(%{message_id: message_id}, attributes)
   end
 
+  # Class A AIS Position Report (Messages 1, 2, and 3)
+  # https://www.navcen.uscg.gov/?pageName=AISMessagesA
+  # !AIVDM,1,1,,B,13IbQQ000100lq`LD7J6Vi<n88AM,0*52  ID 1
+  # !AIVDM,1,1,,B,39NSDjP02201T0HLBJDBv2GD02s1,0*14  ID 3
   defp parse_message(message_id, payload)
        when message_id == 1 or message_id == 2 or message_id == 3 do
     <<repeat_indicator::2, user_id::30, navigational_status::4, rate_of_turn::8, sog::10,
@@ -35,7 +39,7 @@ defmodule AIS.Payload do
 
   # AIS Base Station Report (Message 4) And Coordinated Universal Time And Date Response (Message 11)
   # https://www.navcen.uscg.gov/?pageName=AIS_Base_Station_Report
-  # !AIVDM,1,1,,A,402;bFQv@kkLc00Dl4LE52100@J6,0*58
+  # !AIVDM,1,1,,A,402;bFQv@kkLc00Dl4LE52100@J6,0*58  ID 4
   defp parse_message(message_id, payload) when message_id == 4 or message_id == 11 do
     <<repeat_indicator::2, user_id::30, utc_year::14, utc_month::4, utc_day::5, utc_hour::5,
       utc_minute::6, utc_second::6, position_accuracy::1, longitude::28, latitude::27,
@@ -64,6 +68,8 @@ defmodule AIS.Payload do
     }
   end
 
+  # AIS Class A Ship Static And Voyage Related Data (Message 5)
+  # https://www.navcen.uscg.gov/?pageName=AISMessagesAStatic
   defp parse_message(message_id, payload) when message_id == 5 do
     <<repeat_indicator::2, user_id::30, ais_version_indicator::2, imo_number::30, call_sign::42,
       name::120, type_of_ship_and_cargo_type::8, dimension_a::9, dimension_b::9, dimension_c::6,
@@ -139,10 +145,7 @@ defmodule AIS.Payload do
     }
   end
 
-  # Safety related acknowledgement
-  #
-
-  # AIS STANDARD CLASS B EQUIPMENT POSITION REPORT (MESSAGE 18)
+  # AIS Standard Class B Equipment Position Report (Message 18)
   # https://www.navcen.uscg.gov/?pageName=AISMessagesB
   # !AIVDM,1,1,,B,B3HOIj000H08MeW52k4F7wo5oP06,0*42
   defp parse_message(message_id, payload) when message_id == 18 do
@@ -177,6 +180,8 @@ defmodule AIS.Payload do
   end
 
   # Data link management message
+  # https://gpsd.gitlab.io/gpsd/AIVDM.html#_type_20_data_link_management_message
+  # !AIVDM,1,1,,A,D02:rbR<Tffp5AN9H0,4*7F
   defp parse_message(message_id, _payload) when message_id == 20 do
     # TODO
     %{}
