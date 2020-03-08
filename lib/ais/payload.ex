@@ -204,15 +204,14 @@ defmodule AIS.Payload do
   # https://www.navcen.uscg.gov/?pageName=AISMessage8
   # !AIVDM,1,1,,A,83HT5APj2P00000001BQJ@2E0000,0*72
   defp parse_message(message_id, payload) when message_id == 8 do
-    <<repeat_indicator::2, source_id::30, spare::2, designated_area_code::10, functional_id::6,
+    <<repeat_indicator::2, source_id::30, spare::2, application_identifier::16,
       data::bitstring>> = payload
 
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
       spare: spare,
-      designated_area_code: designated_area_code,
-      functional_id: functional_id,
+      application_identifier: application_identifier,
       data: data
     }
   end

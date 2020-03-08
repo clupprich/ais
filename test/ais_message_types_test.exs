@@ -187,8 +187,7 @@ defmodule AisMessageTypesTest do
          spare: 0,
          talker: "!AI",
          total: "1",
-         designated_area_code: 200,
-         functional_id: 10,
+         application_identifier: 12810,
          data: <<0, 0, 0, 0, 0, 0, 20, 161, 105, 0, 149, 0, 0, 0>>
        }},
       # 9
