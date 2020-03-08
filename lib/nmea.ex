@@ -21,8 +21,9 @@ defmodule NMEA do
     {state, Enum.into(decoded, %{})}
   end
 
-  # Decode !AIVDM messages
-  def decode(talker, formatter, values) when talker == "!AI" and formatter == "VDM" do
+  # Decode !AIVDM and !BSVDM messages
+  def decode(talker, formatter, values)
+      when (talker == "!AI" or talker == "!BS") and formatter == "VDM" do
     keys = [
       :talker,
       :formatter,
