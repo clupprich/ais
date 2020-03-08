@@ -159,6 +159,37 @@ defmodule AisMessageTypesTest do
          functional_id: 10,
          data: <<0, 0, 0, 0, 0, 0, 20, 161, 105, 0, 149, 0, 0, 0>>
        }},
+      # 9
+      {:ok, "!AIVDM,1,1,,B,91b55vRAirOn<94M097lV@@20<6=,0*5D",
+       %{
+         altitude: 583,
+         altitude_sensor: 0,
+         assigned_mode_flag: 0,
+         channel: "B",
+         checksum: "5D",
+         cog: 1177,
+         communication_state: 49549,
+         communication_state_selector_flag: 0,
+         current: "1",
+         dte: 1,
+         formatter: "VDM",
+         latitude: 30_411_039,
+         longitude: 267_149_602,
+         message_id: 9,
+         padding: "0",
+         payload: "91b55vRAirOn<94M097lV@@20<6=",
+         position_accuracy: 0,
+         raim_flag: 0,
+         repeat_indicator: 0,
+         sequential: "",
+         sog: 122,
+         spare1: 0,
+         spare2: 0,
+         talker: "!AI",
+         time_stamp: 1,
+         total: "1",
+         user_id: 111_232_506
+       }},
       # 10
       {:ok, "!AIVDM,1,1,,A,:81:Jf1D02J0,0*0E",
        %{
