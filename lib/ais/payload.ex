@@ -15,8 +15,8 @@ defmodule AIS.Payload do
   defp parse_message(message_id, payload)
        when message_id == 1 or message_id == 2 or message_id == 3 do
     <<repeat_indicator::2, user_id::30, navigational_status::4, rate_of_turn::8, sog::10,
-      position_acucuracy::1, longitude::28, latitude::27, cog::12, true_heading::9, time_stamp::6,
-      special_manoeuvre_indicator::2, spare::3, raim_flag::1, communication_state::19,
+    position_accuracy::1, longitude::28, latitude::27, cog::12, true_heading::9, time_stamp::6,
+    special_maneuvre_indicator::2, spare::3, raim_flag::1, communication_state::19,
       _::bitstring>> = payload
 
     %{
