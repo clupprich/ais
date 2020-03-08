@@ -472,7 +472,9 @@ defmodule AIS.Payload do
   # !AIVDM,2,1,3,A,I`1ifG20UrcNTFE?UgLeo@Dk:o6G4hhI8;?vW2?El>Deju@c3Si451FJd9WPU<>B,0*04
   # !AIVDM,2,2,3,A,gML6TO918o:?6uoOFu3k@=vE,3*41
   defp parse_message(message_id, payload) when message_id == 25 do
-    <<repeat_indicator::2, source_id::30, destination_indicator::1, binary_data_flag::1, _::bitstring>> = payload
+    <<repeat_indicator::2, source_id::30, destination_indicator::1, binary_data_flag::1,
+      _::bitstring>> = payload
+
     # destination_id is either 0 or 30, used or not, etc.
     # TODO FIXME
     %{

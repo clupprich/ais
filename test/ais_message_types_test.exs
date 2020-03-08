@@ -369,7 +369,7 @@ defmodule AisMessageTypesTest do
          talker: "!AI",
          total: "1"
        }},
-       # 23
+      # 23
       # 24 A
       {:ok, "!AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B",
        %{
@@ -414,7 +414,7 @@ defmodule AisMessageTypesTest do
          user_id: 227_006_810,
          vendor_id: 0
        }}
-       # 25
+      # 25
     ]
   end
 end
