@@ -196,6 +196,32 @@ defmodule AIS.Payload do
     }
   end
 
+  # Interrogation (Message 15)
+  # https://www.navcen.uscg.gov/pdf/AIS/ITU_R_M_1371_5_3_13_Message_15.pdf
+  #
+  defp parse_message(message_id, payload) when message_id == 15 do
+    <<repeat_indicator::2, source_id::30, spare1::2, destination_id_1::30, message_id_1::6,
+      slot_offset_1::12, spare2::2, message_id_1_2::6, slot_offset_1_2::12, spare3::2,
+      destination_id_2::30, message_id_2::6, slot_offset_2::12, spare4::2>> = payload
+
+    %{
+      repeat_indicator: repeat_indicator,
+      source_id: source_id,
+      spare1: spare1,
+      destination_id_1: destination_id_1,
+      message_id_1: message_id_1,
+      slot_offset_1: slot_offset_1,
+      spare2: spare2,
+      message_id_1_2: message_id_1_2,
+      slot_offset_1_2: slot_offset_1_2,
+      spare3: spare3,
+      destination_id_2: destination_id_2,
+      message_id_2: message_id_2,
+      slot_offset_2: slot_offset_2,
+      spare4: spare4
+    }
+  end
+
   # Assignment mode command (Message 16)
   # !AIVDM,1,1,,B,@6STUk004lQ206bCKNOBAb6SJ@5s,0*74
   defp parse_message(
@@ -242,12 +268,13 @@ defmodule AIS.Payload do
   # AIS Standard Class B Equipment Position Report (Message 18)
   # https://www.navcen.uscg.gov/?pageName=AISMessagesB
   # !AIVDM,1,1,,B,B3HOIj000H08MeW52k4F7wo5oP06,0*42
+  # Seems to have spurious datas sometime at the end or undocumented values
   defp parse_message(message_id, payload) when message_id == 18 do
     <<repeat_indicator::2, user_id::30, spare1::8, sog::10, position_accuracy::1, longitude::28,
       latitude::27, cog::12, true_heading::9, time_stamp::6, spare2::2, class_b_unit_flag::1,
       class_b_display_flag::1, class_b_dsc_flag::1, class_b_band_flag::1,
       class_b_message_22_flag::1, mode_flag::1, raim_flag::1,
-      communication_state_selector_flag::1, communication_state::19>> = payload
+      communication_state_selector_flag::1, communication_state::19, _::bitstring>> = payload
 
     %{
       repeat_indicator: repeat_indicator,
@@ -358,6 +385,8 @@ defmodule AIS.Payload do
   defp parse_message(message_id, _payload) when message_id == 22 do
     %{}
 
+    # FIXME
+
     # <<repeat_indicator::2, id::30, spare1::2, channel_a::12, channel_b::12, tx_rx::4, power::1,
     #   ne_lon::18, ne_lat::17, sw_lon::18, sw_lat::17, dest_1_id::30, dest_2_id::30, addressed::1,
     #   channel_a_band::1, channel_b_band::1, zone_size::3, spare2::23, _::bitstring>> = payload
@@ -384,42 +413,19 @@ defmodule AIS.Payload do
     # }
   end
 
-  # MESSAGE 24: STATIC DATA REPORT (PART A)
-  # https://www.navcen.uscg.gov/?pageName=AISMessagesB
-  # !AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B      Part A
-  # part_number=0 when part A
-  # For some reasons some garbage seems present sometime after the name
-  defp parse_message(
-         message_id,
-         <<repeat_indicator::2, user_id::30, part_number::2, name::120>>
-       )
-       when message_id == 24 do
-    %{
-      repeat_indicator: repeat_indicator,
-      user_id: user_id,
-      part_number: part_number,
-      name: SixBit.get_string(name, 120)
-    }
-  end
-
-  # Apparently the spare should be 8, might use the size of "spare of part B"...
-  defp parse_message(
-         message_id,
-         <<repeat_indicator::2, user_id::30, part_number::2, name::120, spare::2>>
-       )
-       when message_id == 24 do
-    %{
-      repeat_indicator: repeat_indicator,
-      user_id: user_id,
-      part_number: part_number,
-      name: SixBit.get_string(name, 120),
-      spare: spare
-    }
+  # Group assignment command
+  # https://gpsd.gitlab.io/gpsd/AIVDM.html#_type_23_group_assignment_command
+  # !AIVDM,3,1,9,A,8h30otA?0@<o;NPPP2?k<oRWU5;si0R7@00o;NPPP2?lEoRQgU;j@17V@00o;NPP,0*62
+  # !AIVDM,3,2,9,A,GeF1<oQDN5;>aQ8H@00o;NPPPP3D<oPPEU;M418a@00o;NPPGeCD1oOEPU:WtQ8d,0*4D
+  # !AIVDM,3,3,9,A,@00o;NPPPPC=DoN0lU:2WQ8u@00,2*56
+  defp parse_message(message_id, _payload) when message_id == 23 do
+    %{}
   end
 
   # MESSAGE 24: STATIC DATA REPORT (PART B)
   # !AIVDM,1,1,,A,H3HOIFTl00000006Gqjhm01p?650,0*4F     Part B
   # part_number=1 when part B
+  # Pattern-matching magic: B is before A
   defp parse_message(
          message_id,
          <<repeat_indicator::2, user_id::30, part_number::2, type_of_ship_and_cargo_type::8,
@@ -443,11 +449,39 @@ defmodule AIS.Payload do
     }
   end
 
-  # Message 24 part A + B ???
-  # Cannot make it to match any known struct, just return nothing and handle later...
-  # defp parse_message(message_id, _payload) when message_id == 24 do
-  #  %{}
-  # end
+  # MESSAGE 24: STATIC DATA REPORT (PART A)
+  # https://www.navcen.uscg.gov/?pageName=AISMessagesB
+  # !AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B      Part A
+  # part_number=0 when part A
+  # For some reasons some spurious datas seems present sometime after the name
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, user_id::30, part_number::2, name::120, _::bitstring>>
+       )
+       when message_id == 24 do
+    %{
+      repeat_indicator: repeat_indicator,
+      user_id: user_id,
+      part_number: part_number,
+      name: SixBit.get_string(name, 120)
+    }
+  end
+
+  # AIS SINGLE SLOT BINARY MESSAGE (MESSAGE 25)
+  # https://www.navcen.uscg.gov/?pageName=AISMessage25
+  # !AIVDM,2,1,3,A,I`1ifG20UrcNTFE?UgLeo@Dk:o6G4hhI8;?vW2?El>Deju@c3Si451FJd9WPU<>B,0*04
+  # !AIVDM,2,2,3,A,gML6TO918o:?6uoOFu3k@=vE,3*41
+  defp parse_message(message_id, payload) when message_id == 25 do
+    <<repeat_indicator::2, source_id::30, destination_indicator::1, binary_data_flag::1, _::bitstring>> = payload
+    # destination_id is either 0 or 30, used or not, etc.
+    # TODO FIXME
+    %{
+      repeat_indicator: repeat_indicator,
+      source_id: source_id,
+      destination_indicator: destination_indicator,
+      binary_data_flag: binary_data_flag
+    }
+  end
 
   # Message 28 to 63 are reserved for future use
   # 45 appeared in the NMEA sample

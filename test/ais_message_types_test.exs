@@ -210,6 +210,7 @@ defmodule AisMessageTypesTest do
          total: "1"
        }},
       # 11
+      # 15
       # 16
       {:ok, "!AIVDM,1,1,,B,@6STUk004lQ206bCKNOBAb6SJ@5s,0*74",
        %{
@@ -368,6 +369,7 @@ defmodule AisMessageTypesTest do
          talker: "!AI",
          total: "1"
        }},
+       # 23
       # 24 A
       {:ok, "!AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B",
        %{
@@ -384,8 +386,7 @@ defmodule AisMessageTypesTest do
          repeat_indicator: 0,
          user_id: 227_006_920,
          part_number: 0,
-         name: "GLOUTON",
-         spare: 0
+         name: "GLOUTON"
        }},
       # 24 B
       {:ok, "!AIVDM,1,1,,A,H3HOIFTl00000006Gqjhm01p?650,0*4F",
@@ -413,6 +414,7 @@ defmodule AisMessageTypesTest do
          user_id: 227_006_810,
          vendor_id: 0
        }}
+       # 25
     ]
   end
 end
