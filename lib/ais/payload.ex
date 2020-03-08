@@ -204,8 +204,8 @@ defmodule AIS.Payload do
   # https://www.navcen.uscg.gov/?pageName=AISMessage8
   # !AIVDM,1,1,,A,83HT5APj2P00000001BQJ@2E0000,0*72
   defp parse_message(message_id, payload) when message_id == 8 do
-    <<repeat_indicator::2, source_id::30, spare::2, application_identifier::16,
-      data::bitstring>> = payload
+    <<repeat_indicator::2, source_id::30, spare::2, application_identifier::16, data::bitstring>> =
+      payload
 
     %{
       repeat_indicator: repeat_indicator,
@@ -222,9 +222,9 @@ defmodule AIS.Payload do
   defp parse_message(
          message_id,
          <<repeat_indicator::2, user_id::30, altitude::12, sog::10, position_accuracy::1,
-           longitude::integer-signed-size(28), latitude::integer-signed-size(27), cog::12, time_stamp::6, altitude_sensor::1, spare1::7,
-           dte::1, spare2::3, assigned_mode_flag::1, raim_flag::1,
-           communication_state_selector_flag::1, communication_state::19>>
+           longitude::integer-signed-size(28), latitude::integer-signed-size(27), cog::12,
+           time_stamp::6, altitude_sensor::1, spare1::7, dte::1, spare2::3, assigned_mode_flag::1,
+           raim_flag::1, communication_state_selector_flag::1, communication_state::19>>
        )
        when message_id == 9 do
     %{
@@ -319,10 +319,8 @@ defmodule AIS.Payload do
   # TODO: parse the Differential Correction Data Table
   defp parse_message(
          message_id,
-         <<repeat_indicator::2, source_id::30, spare1::2,
-         longitude::integer-signed-size(18), latitude::integer-signed-size(17),
-         spare2::5,
-           data::bitstring>>
+         <<repeat_indicator::2, source_id::30, spare1::2, longitude::integer-signed-size(18),
+           latitude::integer-signed-size(17), spare2::5, data::bitstring>>
        )
        when message_id == 17 do
     %{
@@ -344,11 +342,11 @@ defmodule AIS.Payload do
   # Seems to have spurious datas sometime at the end or undocumented values
   defp parse_message(message_id, payload) when message_id == 18 do
     <<repeat_indicator::2, user_id::30, spare1::8, sog::10, position_accuracy::1,
-    longitude::integer-signed-size(28), latitude::integer-signed-size(27),
-     cog::12, true_heading::9, time_stamp::6, spare2::2, class_b_unit_flag::1,
-      class_b_display_flag::1, class_b_dsc_flag::1, class_b_band_flag::1,
-      class_b_message_22_flag::1, mode_flag::1, raim_flag::1,
-      communication_state_selector_flag::1, communication_state::19, _::bitstring>> = payload
+      longitude::integer-signed-size(28), latitude::integer-signed-size(27), cog::12,
+      true_heading::9, time_stamp::6, spare2::2, class_b_unit_flag::1, class_b_display_flag::1,
+      class_b_dsc_flag::1, class_b_band_flag::1, class_b_message_22_flag::1, mode_flag::1,
+      raim_flag::1, communication_state_selector_flag::1, communication_state::19,
+      _::bitstring>> = payload
 
     %{
       repeat_indicator: repeat_indicator,
@@ -380,11 +378,11 @@ defmodule AIS.Payload do
   defp parse_message(
          message_id,
          <<repeat_indicator::2, user_id::30, spare1::8, sog::10, position_accuracy::1,
-         longitude::integer-signed-size(28), latitude::integer-signed-size(27),
-          cog::12, true_heading::9, time_stamp::6, spare2::4,
-           name::120, type_of_ship_and_cargo_type::8, dimension_a::9, dimension_b::9,
-           dimension_c::6, dimension_d::6, type_of_electronic_position_fixing_device::4,
-           raim_flag::1, dte::1, assigned_mode_flag::1, spare3::4>>
+           longitude::integer-signed-size(28), latitude::integer-signed-size(27), cog::12,
+           true_heading::9, time_stamp::6, spare2::4, name::120, type_of_ship_and_cargo_type::8,
+           dimension_a::9, dimension_b::9, dimension_c::6, dimension_d::6,
+           type_of_electronic_position_fixing_device::4, raim_flag::1, dte::1,
+           assigned_mode_flag::1, spare3::4>>
        )
        when message_id == 19 do
     %{
@@ -426,8 +424,7 @@ defmodule AIS.Payload do
   # !AIVDM,1,1,,B,E>jCfrv2`0c2h0W:0a2ah@@@@@@004WD>;2<H50hppN000,4*0A
   defp parse_message(message_id, payload) when message_id == 21 do
     <<repeat_indicator::2, id::30, type_of_aids_to_navigation::5, name_of_aids_to_navigation::120,
-      position_accuracy::1,
-      longitude::integer-signed-size(28), latitude::integer-signed-size(27),
+      position_accuracy::1, longitude::integer-signed-size(28), latitude::integer-signed-size(27),
       dimension_a::9, dimension_b::9, dimension_c::6, dimension_d::6,
       type_of_electronic_position_fixing_device::4, time_stamp::6, off_position_indicator::1,
       aton_status::8, raim_flag::1, virtual_aton_flag::1, assigned_mode_flag::1, spare::1,
@@ -557,7 +554,7 @@ defmodule AIS.Payload do
       _::bitstring>> = payload
 
     # destination_id is either 0 or 30, used or not, etc.
-    # TODO FIXME
+    # TODO handle
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
@@ -568,7 +565,6 @@ defmodule AIS.Payload do
 
   # Message 28 to 63 are reserved for future use
   # 45 appeared in the NMEA sample
-  #
   defp parse_message(message_id, _payload) when message_id in 28..63 do
     %{}
   end

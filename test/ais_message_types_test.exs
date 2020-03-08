@@ -397,7 +397,7 @@ defmodule AisMessageTypesTest do
          dimension_b: 6,
          dimension_c: 7,
          dimension_d: 7,
-            formatter: "VDM",
+         formatter: "VDM",
          id: 992_276_203,
          latitude: 49.536165,
          longitude: 0.0315,
