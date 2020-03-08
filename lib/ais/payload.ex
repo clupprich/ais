@@ -14,10 +14,11 @@ defmodule AIS.Payload do
   # !AIVDM,1,1,,B,39NSDjP02201T0HLBJDBv2GD02s1,0*14  ID 3
   defp parse_message(message_id, payload)
        when message_id == 1 or message_id == 2 or message_id == 3 do
-    <<repeat_indicator::2, user_id::30, navigational_status::4, rate_of_turn::integer-signed-size(8), sog::integer-unsigned-size(10),
-    position_accuracy::1, longitude::integer-signed-size(28), latitude::integer-signed-size(27), cog::12, true_heading::9, time_stamp::6,
-    special_maneuvre_indicator::2, spare::3, raim_flag::1, communication_state::19,
-      _::bitstring>> = payload
+    <<repeat_indicator::2, user_id::30, navigational_status::4,
+      rate_of_turn::integer-signed-size(8), sog::integer-unsigned-size(10), position_accuracy::1,
+      longitude::integer-signed-size(28), latitude::integer-signed-size(27), cog::12,
+      true_heading::9, time_stamp::6, special_maneuvre_indicator::2, spare::3, raim_flag::1,
+      communication_state::19, _::bitstring>> = payload
 
     %{
       repeat_indicator: repeat_indicator,
@@ -26,8 +27,8 @@ defmodule AIS.Payload do
       rate_of_turn: rate_of_turn,
       sog: sog / 10.0,
       position_accuracy: position_accuracy,
-      longitude: longitude / 600000.0,
-      latitude: latitude / 600000.0,
+      longitude: longitude / 600_000.0,
+      latitude: latitude / 600_000.0,
       cog: cog / 10.0,
       true_heading: true_heading,
       time_stamp: time_stamp,
@@ -58,8 +59,8 @@ defmodule AIS.Payload do
       utc_minute: utc_minute,
       utc_second: utc_second,
       position_accuracy: position_accuracy,
-      longitude: longitude / 600000.0,
-      latitude: latitude / 600000.0,
+      longitude: longitude / 600_000.0,
+      latitude: latitude / 600_000.0,
       type_of_electronic_position_fixing_device: type_of_electronic_position_fixing_device,
       transmission_control_for_long_range_broadcast_message:
         transmission_control_for_long_range_broadcast_message,
@@ -106,7 +107,8 @@ defmodule AIS.Payload do
   # !AIVDM,1,1,,A,6>jCKIkfJjOt>db;q700@20,2*16
   defp parse_message(message_id, payload) when message_id == 6 do
     <<repeat_indicator::2, source_id::30, sequence_number::2, destination_id::30,
-      retransmit_flag::1, spare::1, application_identifier::16, application_data::bitstring>> = payload
+      retransmit_flag::1, spare::1, application_identifier::16,
+      application_data::bitstring>> = payload
 
     %{
       repeat_indicator: repeat_indicator,
@@ -123,13 +125,78 @@ defmodule AIS.Payload do
   # AIS Binary Acknowledgment Message (Message 7)
   # https://gpsd.gitlab.io/gpsd/AIVDM.html#_type_7_binary_acknowledge
   # !AIVDM,1,1,,A,777QkG00RW38,0*62
-  defp parse_message(message_id, payload) when message_id == 7 do
-    <<repeat_indicator::2, source_id::30, spare::2, _::bitstring>> = payload
-
+  # 4 destinations
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, source_id::30, spare::2, id_1::30, seq_1::2, id_2::30, seq_2::2,
+           id_3::30, seq_3::2, id_4::30, seq_4::2, _::bitstring>>
+       )
+       when message_id == 7 do
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
-      spare: spare
+      spare: spare,
+      id_1: id_1,
+      seq_1: seq_1,
+      id_2: id_2,
+      seq_2: seq_2,
+      id_3: id_3,
+      seq_3: seq_3,
+      id_4: id_4,
+      seq_4: seq_4
+    }
+  end
+
+  # 3 destinations
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, source_id::30, spare::2, id_1::30, seq_1::2, id_2::30, seq_2::2,
+           id_3::30, seq_3::2, _::bitstring>>
+       )
+       when message_id == 7 do
+    %{
+      repeat_indicator: repeat_indicator,
+      source_id: source_id,
+      spare: spare,
+      id_1: id_1,
+      seq_1: seq_1,
+      id_2: id_2,
+      seq_2: seq_2,
+      id_3: id_3,
+      seq_3: seq_3
+    }
+  end
+
+  # 2 destinations
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, source_id::30, spare::2, id_1::30, seq_1::2, id_2::30, seq_2::2,
+           _::bitstring>>
+       )
+       when message_id == 7 do
+    %{
+      repeat_indicator: repeat_indicator,
+      source_id: source_id,
+      spare: spare,
+      id_1: id_1,
+      seq_1: seq_1,
+      id_2: id_2,
+      seq_2: seq_2
+    }
+  end
+
+  # 1 destination
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, source_id::30, spare::2, id_1::30, seq_1::2, _::bitstring>>
+       )
+       when message_id == 7 do
+    %{
+      repeat_indicator: repeat_indicator,
+      source_id: source_id,
+      spare: spare,
+      id_1: id_1,
+      seq_1: seq_1
     }
   end
 
@@ -204,7 +271,8 @@ defmodule AIS.Payload do
   defp parse_message(message_id, payload) when message_id == 15 do
     <<repeat_indicator::2, source_id::30, spare1::2, destination_id_1::30, message_id_1::6,
       slot_offset_1::12, spare2::2, message_id_1_2::6, slot_offset_1_2::12, spare3::2,
-      destination_id_2::30, message_id_2::6, slot_offset_2::12, spare4::2, _::bitstring>> = payload
+      destination_id_2::30, message_id_2::6, slot_offset_2::12, spare4::2,
+      _::bitstring>> = payload
 
     %{
       repeat_indicator: repeat_indicator,
