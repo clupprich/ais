@@ -16,7 +16,8 @@ defmodule AIS.Payload do
        when message_id == 1 or message_id == 2 or message_id == 3 do
     <<repeat_indicator::2, user_id::30, navigational_status::4, rate_of_turn::8, sog::10,
       position_acucuracy::1, longitude::28, latitude::27, cog::12, true_heading::9, time_stamp::6,
-      special_manoeuvre_indicator::2, spare::3, raim_flag::1, communication_state::19>> = payload
+      special_manoeuvre_indicator::2, spare::3, raim_flag::1, communication_state::19,
+      _::bitstring>> = payload
 
     %{
       repeat_indicator: repeat_indicator,
@@ -148,6 +149,96 @@ defmodule AIS.Payload do
     }
   end
 
+  # AIS STANDARD SEARCH AND RESCUE AIRCRAFT POSITION REPORT (MESSAGE 9)
+  # https://www.navcen.uscg.gov/?pageName=AISMessage9
+  # !AIVDM,1,1,,B,91b55vRAirOn<94M097lV@@20<6=,0*5D
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, user_id::30, altitude::12, sog::10, position_accuracy::1,
+           longitude::28, latitude::27, cog::12, time_stamp::6, altitude_sensor::1, spare1::7,
+           dte::1, spare2::3, assigned_mode_flag::1, raim_flag::1,
+           communication_state_selector_flag::1, communication_state::19>>
+       )
+       when message_id == 9 do
+    %{
+      repeat_indicator: repeat_indicator,
+      user_id: user_id,
+      altitude: altitude,
+      sog: sog,
+      position_accuracy: position_accuracy,
+      longitude: longitude,
+      latitude: latitude,
+      cog: cog,
+      time_stamp: time_stamp,
+      altitude_sensor: altitude_sensor,
+      spare1: spare1,
+      dte: dte,
+      spare2: spare2,
+      assigned_mode_flag: assigned_mode_flag,
+      raim_flag: raim_flag,
+      communication_state_selector_flag: communication_state_selector_flag,
+      communication_state: communication_state
+    }
+  end
+
+  # AIS COORDINATED UNIVERSAL TIME AND DATE INQUIRY (MESSAGE 10)
+  # https://www.navcen.uscg.gov/?pageName=AIS_Base_Station_Report
+  # !AIVDM,1,1,,A,:81:Jf1D02J0,0*0E
+  defp parse_message(message_id, payload) when message_id == 10 do
+    <<repeat_indicator::2, source_id::30, spare1::2, destination_id::30, spare2::2>> = payload
+
+    %{
+      repeat_indicator: repeat_indicator,
+      source_id: source_id,
+      spare1: spare1,
+      destination_id: destination_id,
+      spare2: spare2
+    }
+  end
+
+  # Assignment mode command (Message 16)
+  # !AIVDM,1,1,,B,@6STUk004lQ206bCKNOBAb6SJ@5s,0*74
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, source_id::30, spare::2, destination_a_id::30, offset_a::12,
+           increment_a::10, destination_b_id::30, offset_b::12, increment_b::10, _::bitstring>>
+       )
+       when message_id == 16 do
+    %{
+      repeat_indicator: repeat_indicator,
+      source_id: source_id,
+      spare: spare,
+      destination_a_id: destination_a_id,
+      offset_a: offset_a,
+      increment_a: increment_a,
+      destination_b_id: destination_b_id,
+      offset_b: offset_b,
+      increment_b: increment_b
+    }
+  end
+
+  # AIS GLOBAL NAVIGATION-SATELLITE SYSTEM BROADCAST BINARY MESSAGE (MESSAGE 17)
+  # https://www.navcen.uscg.gov/?pageName=AISMessage17
+  # !AIVDM,1,1,,A,A04757QAv0agH2JdGlLP7Oqa0@TGw9H170,4*5A
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, source_id::30, spare1::2, longitude::18, latitude::17, spare2::5,
+           data::bitstring>>
+       )
+       when message_id == 17 do
+    %{
+      repeat_indicator: repeat_indicator,
+      source_id: source_id,
+      spare1: spare1,
+      longitude: longitude,
+      latitude: latitude,
+      spare2: spare2,
+      data: data
+    }
+
+    # TODO decode data struct
+  end
+
   # AIS Standard Class B Equipment Position Report (Message 18)
   # https://www.navcen.uscg.gov/?pageName=AISMessagesB
   # !AIVDM,1,1,,B,B3HOIj000H08MeW52k4F7wo5oP06,0*42
@@ -179,6 +270,44 @@ defmodule AIS.Payload do
       raim_flag: raim_flag,
       communication_state_selector_flag: communication_state_selector_flag,
       communication_state: communication_state
+    }
+  end
+
+  # MESSAGE 19: EXTENDED CLASS B EQUIPMENT POSITION REPORT (legacy)
+  # https://www.navcen.uscg.gov/?pageName=AISMessagesB
+  # !AIVDM,1,1,,B,C69DqeP0Ar8;JH3R6<4O7wWPl@:62L>jcaQgh0000000?104222P,0*32
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, user_id::30, spare1::8, sog::10, position_accuracy::1,
+           longitude::28, latitude::27, cog::12, true_heading::9, time_stamp::6, spare2::4,
+           name::120, type_of_ship_and_cargo_type::8, dimension_a::9, dimension_b::9,
+           dimension_c::6, dimension_d::6, type_of_electronic_position_fixing_device::4,
+           raim_flag::1, dte::1, assigned_mode_flag::1, spare3::4>>
+       )
+       when message_id == 19 do
+    %{
+      repeat_indicator: repeat_indicator,
+      user_id: user_id,
+      spare1: spare1,
+      sog: sog,
+      position_accuracy: position_accuracy,
+      longitude: longitude,
+      latitude: latitude,
+      cog: cog,
+      true_heading: true_heading,
+      time_stamp: time_stamp,
+      spare2: spare2,
+      name: SixBit.get_string(name, 120),
+      type_of_ship_and_cargo_type: type_of_ship_and_cargo_type,
+      dimension_a: dimension_a,
+      dimension_b: dimension_b,
+      dimension_c: dimension_c,
+      dimension_d: dimension_d,
+      type_of_electronic_position_fixing_device: type_of_electronic_position_fixing_device,
+      raim_flag: raim_flag,
+      dte: dte,
+      assigned_mode_flag: assigned_mode_flag,
+      spare3: spare3
     }
   end
 

@@ -34,7 +34,8 @@ defmodule ChecksumTest do
       {"!AIVDM,2,1,7,B,53HPIH82<K2`IOW;3H1H:0L5<<tLpD000000000l1PI644000031H20ETQ@0,0*0C",
        :incomplete},
       {"!AIVDM,1,1,,A,13IMm1301eP02H<LC5C:gpPl0Uih,0*01", :ok},
-      {"!AIVDM,1,1,,B,13IbQQ000100lqLLD7DoSA<p80RN,0*02", :ok}
+      {"!AIVDM,1,1,,B,13IbQQ000100lqLLD7DoSA<p80RN,0*02", :ok},
+      {"!AIVDM,1,1,,A,13n@oD0PB@0IRqvQj@W;EppH088t19uvPT,0*3E", :ok}
     ]
   end
 end
