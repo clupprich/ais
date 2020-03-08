@@ -147,7 +147,9 @@ defmodule AisMessageTypesTest do
          source_id: 992_271_207,
          spare: 0,
          talker: "!AI",
-         total: "1"
+         total: "1",
+         application_data: <<139, 228, 112, 0, 64, 32, 0::size(2)>>,
+         application_identifier: 15050
        }},
       # 7
       {:ok, "!AIVDM,1,1,,A,777QkG00RW38,0*62",

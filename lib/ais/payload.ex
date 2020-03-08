@@ -71,6 +71,7 @@ defmodule AIS.Payload do
 
   # AIS Class A Ship Static And Voyage Related Data (Message 5)
   # https://www.navcen.uscg.gov/?pageName=AISMessagesAStatic
+  # TODO, not validated yet
   defp parse_message(message_id, payload) when message_id == 5 do
     <<repeat_indicator::2, user_id::30, ais_version_indicator::2, imo_number::30, call_sign::42,
       name::120, type_of_ship_and_cargo_type::8, dimension_a::9, dimension_b::9, dimension_c::6,
@@ -105,17 +106,17 @@ defmodule AIS.Payload do
   # !AIVDM,1,1,,A,6>jCKIkfJjOt>db;q700@20,2*16
   defp parse_message(message_id, payload) when message_id == 6 do
     <<repeat_indicator::2, source_id::30, sequence_number::2, destination_id::30,
-      retransmit_flag::1, spare::1, _::bitstring>> = payload
+      retransmit_flag::1, spare::1, application_identifier::16, application_data::bitstring>> = payload
 
-    # Binary data = max 936 bits
-    # TODO: how to handle that ?
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
       sequence_number: sequence_number,
       destination_id: destination_id,
       retransmit_flag: retransmit_flag,
-      spare: spare
+      spare: spare,
+      application_identifier: application_identifier,
+      application_data: application_data
     }
   end
 
