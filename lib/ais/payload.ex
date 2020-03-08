@@ -222,7 +222,7 @@ defmodule AIS.Payload do
   defp parse_message(
          message_id,
          <<repeat_indicator::2, user_id::30, altitude::12, sog::10, position_accuracy::1,
-           longitude::28, latitude::27, cog::12, time_stamp::6, altitude_sensor::1, spare1::7,
+           longitude::integer-signed-size(28), latitude::integer-signed-size(27), cog::12, time_stamp::6, altitude_sensor::1, spare1::7,
            dte::1, spare2::3, assigned_mode_flag::1, raim_flag::1,
            communication_state_selector_flag::1, communication_state::19>>
        )
@@ -233,9 +233,9 @@ defmodule AIS.Payload do
       altitude: altitude,
       sog: sog,
       position_accuracy: position_accuracy,
-      longitude: longitude,
-      latitude: latitude,
-      cog: cog,
+      longitude: longitude / 600_000.0,
+      latitude: latitude / 600_000.0,
+      cog: cog / 10,
       time_stamp: time_stamp,
       altitude_sensor: altitude_sensor,
       spare1: spare1,
