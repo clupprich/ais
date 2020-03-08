@@ -14,6 +14,10 @@ defmodule AIS do
         {state, attributes} = AIS.Payload.parse(sentence.payload)
         sentence = Map.merge(attributes, sentence)
 
+        if state == :invalid do
+          IO.puts("Cannot decode message: " <> string)
+        end
+
         {state, sentence}
 
       sentence[:total] == sentence[:current] ->
@@ -26,6 +30,10 @@ defmodule AIS do
 
         {state, attributes} = AIS.Payload.parse(sentence.payload)
         sentence = Map.merge(attributes, sentence)
+
+        if state == :invalid do
+          IO.puts("Cannot decode message: " <> string)
+        end
 
         {state, sentence}
 
