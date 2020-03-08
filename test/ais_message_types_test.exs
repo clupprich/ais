@@ -271,6 +271,24 @@ defmodule AisMessageTypesTest do
          utc_year: 2012
        }},
       # 15
+      {:ok, "!AIVDM,1,1,,B,?8Hw7D1HLskPD00,2*55", %{
+        channel: "B",
+        checksum: "55",
+        current: "1",
+        destination_id_1: 370995000,
+        formatter: "VDM",
+        message_id: 15,
+        message_id_1: 5,
+        padding: "2",
+        payload: "?8Hw7D1HLskPD00",
+        repeat_indicator: 0,
+        sequential: "",
+        slot_offset_1: 0,
+        source_id: 563070800,
+        spare1: 0,
+        talker: "!AI",
+        total: "1"
+      }},
       # 16
       {:ok, "!AIVDM,1,1,,B,@6STUk004lQ206bCKNOBAb6SJ@5s,0*74",
        %{
