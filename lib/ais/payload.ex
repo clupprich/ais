@@ -426,12 +426,14 @@ defmodule AIS.Payload do
   # !AIVDM,1,1,,B,E>jCfrv2`0c2h0W:0a2ah@@@@@@004WD>;2<H50hppN000,4*0A
   defp parse_message(message_id, payload) when message_id == 21 do
     <<repeat_indicator::2, id::30, type_of_aids_to_navigation::5, name_of_aids_to_navigation::120,
-      position_accuracy::1, longitude::28, latitude::27, dimension::30,
+      position_accuracy::1,
+      longitude::integer-signed-size(28), latitude::integer-signed-size(27),
+      dimension_a::9, dimension_b::9, dimension_c::6, dimension_d::6,
       type_of_electronic_position_fixing_device::4, time_stamp::6, off_position_indicator::1,
       aton_status::8, raim_flag::1, virtual_aton_flag::1, assigned_mode_flag::1, spare::1,
       _::bitstring>> = payload
 
-    # Extra dynamic fields:
+    # TODO Extra dynamic fields after the last spare:
     #  Name of Aid-to-Navigation Extension 	0, 6, 12, 18, 24, 30, 36, ... 84
     #  Spare 	0, 2, 4, or 6
     %{
@@ -440,9 +442,12 @@ defmodule AIS.Payload do
       type_of_aids_to_navigation: type_of_aids_to_navigation,
       name_of_aids_to_navigation: SixBit.get_string(name_of_aids_to_navigation, 120),
       position_accuracy: position_accuracy,
-      longitude: longitude,
-      latitude: latitude,
-      dimension: dimension,
+      longitude: longitude / 600_000.0,
+      latitude: latitude / 600_000.0,
+      dimension_a: dimension_a,
+      dimension_b: dimension_b,
+      dimension_c: dimension_c,
+      dimension_d: dimension_d,
       type_of_electronic_position_fixing_device: type_of_electronic_position_fixing_device,
       time_stamp: time_stamp,
       off_position_indicator: off_position_indicator,
