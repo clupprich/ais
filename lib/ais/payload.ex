@@ -465,7 +465,7 @@ defmodule AIS.Payload do
   defp parse_message(message_id, _payload) when message_id == 22 do
     %{}
 
-    # FIXME
+    # TODO handle this message
 
     # <<repeat_indicator::2, id::30, spare1::2, channel_a::12, channel_b::12, tx_rx::4, power::1,
     #   ne_lon::18, ne_lat::17, sw_lon::18, sw_lat::17, dest_1_id::30, dest_2_id::30, addressed::1,
@@ -499,6 +499,7 @@ defmodule AIS.Payload do
   # !AIVDM,3,2,9,A,GeF1<oQDN5;>aQ8H@00o;NPPPP3D<oPPEU;M418a@00o;NPPGeCD1oOEPU:WtQ8d,0*4D
   # !AIVDM,3,3,9,A,@00o;NPPPPC=DoN0lU:2WQ8u@00,2*56
   defp parse_message(message_id, _payload) when message_id == 23 do
+    # TODO handle this message
     %{}
   end
 
@@ -518,7 +519,7 @@ defmodule AIS.Payload do
       user_id: user_id,
       part_number: part_number,
       type_of_ship_and_cargo_type: type_of_ship_and_cargo_type,
-      vendor_id: vendor_id,
+      vendor_id: SixBit.get_string(vendor_id, 42),
       call_sign: SixBit.get_string(call_sign, 42),
       dimension_a: dimension_a,
       dimension_b: dimension_b,

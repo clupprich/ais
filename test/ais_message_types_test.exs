@@ -475,7 +475,7 @@ defmodule AisMessageTypesTest do
          type_of_electronic_position_fixing_device: 0,
          type_of_ship_and_cargo_type: 52,
          user_id: 227_006_810,
-         vendor_id: 0
+         vendor_id: ""
        }}
       # 25 (only fragmented messages)
     ]
