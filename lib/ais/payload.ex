@@ -73,6 +73,7 @@ defmodule AIS.Payload do
   # AIS Class A Ship Static And Voyage Related Data (Message 5)
   # https://www.navcen.uscg.gov/?pageName=AISMessagesAStatic
   # TODO, not validated yet
+  # TODO parse ETA
   defp parse_message(message_id, payload) when message_id == 5 do
     <<repeat_indicator::2, user_id::30, ais_version_indicator::2, imo_number::30, call_sign::42,
       name::120, type_of_ship_and_cargo_type::8, dimension_a::9, dimension_b::9, dimension_c::6,
@@ -94,8 +95,7 @@ defmodule AIS.Payload do
       dimension_d: dimension_d,
       type_of_electronic_position_fixing_device: type_of_electronic_position_fixing_device,
       eta: eta,
-      # divide by 10
-      maximum_present_static_draught: maximum_present_static_draught,
+      maximum_present_static_draught: maximum_present_static_draught / 10.0,
       destination: SixBit.get_string(destination, 120),
       dte: dte,
       spare: spare
