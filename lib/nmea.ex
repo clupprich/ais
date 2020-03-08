@@ -36,6 +36,7 @@ defmodule NMEA do
 
     decoded = checksum(Enum.zip(keys, values), :padding)
     computed_checksum = calculate_aivdm_checksum(decoded)
+
     if computed_checksum == decoded[:checksum] do
       {:ok, decoded}
     else
@@ -49,6 +50,7 @@ defmodule NMEA do
 
     decoded = checksum(Enum.zip(keys, values), :east_west)
     computed_checksum = calculate_gpgll_checksum(decoded)
+
     if computed_checksum == decoded[:checksum] do
       {:ok, decoded}
     else
@@ -60,16 +62,20 @@ defmodule NMEA do
   Calculate the checksum
   """
   def calculate_aivdm_checksum(list) do
-    "#{String.slice(list[:talker], 1..2)}#{list[:formatter]},#{list[:total]},#{list[:current]},#{list[:sequential]},#{list[:channel]},#{list[:payload]},#{list[:padding]}"
-    |> String.to_charlist
+    "#{String.slice(list[:talker], 1..2)}#{list[:formatter]},#{list[:total]},#{list[:current]},#{
+      list[:sequential]
+    },#{list[:channel]},#{list[:payload]},#{list[:padding]}"
+    |> String.to_charlist()
     |> Enum.reduce(0, &bxor/2)
     |> Integer.to_string(16)
     |> String.pad_leading(2, "0")
   end
 
   def calculate_gpgll_checksum(list) do
-    "#{String.slice(list[:talker], 1..2)}#{list[:formatter]},#{list[:latitude]},#{list[:north_south]},#{list[:longitude]},#{list[:east_west]}"
-    |> String.to_charlist
+    "#{String.slice(list[:talker], 1..2)}#{list[:formatter]},#{list[:latitude]},#{
+      list[:north_south]
+    },#{list[:longitude]},#{list[:east_west]}"
+    |> String.to_charlist()
     |> Enum.reduce(0, &bxor/2)
     |> Integer.to_string(16)
     |> String.pad_leading(2, "0")

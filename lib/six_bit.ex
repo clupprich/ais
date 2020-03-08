@@ -90,6 +90,6 @@ defmodule SixBit do
   end
 
   defp bitstring_to_binary(bitstring) when bit_size(bitstring) == 6 do
-    <<(<<0::2>>::bitstring), bitstring::bitstring>>
+    <<(<<0::2>>)::bitstring, bitstring::bitstring>>
   end
 end

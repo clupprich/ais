@@ -18,9 +18,9 @@ defmodule AISTest do
                 padding: "0",
                 checksum: "5C",
                 cog: 510,
-                communication_state: 149208,
-                latitude: 28549700,
-                longitude: 195027956,
+                communication_state: 149_208,
+                latitude: 28_549_700,
+                longitude: 195_027_956,
                 message_id: 1,
                 navigational_status: 5,
                 position_acucuracy: 0,
@@ -32,7 +32,7 @@ defmodule AISTest do
                 special_manoeuvre_indicator: 0,
                 time_stamp: 15,
                 true_heading: 181,
-                user_id: 477553000
+                user_id: 477_553_000
               }}
 
     assert AIS.get(ais) == []
@@ -86,7 +86,8 @@ defmodule AISTest do
                 dimension_d: 10,
                 dte: 0,
                 spare: 0,
-                payload: "55P5TL01VIaAL@7WKO@mBplU@<PDhh000000001S;AJ::4A80?4i@E531@0000000000000",
+                payload:
+                  "55P5TL01VIaAL@7WKO@mBplU@<PDhh000000001S;AJ::4A80?4i@E531@0000000000000",
                 padding: "2",
                 checksum: "55"
               }}
