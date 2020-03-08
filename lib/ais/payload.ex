@@ -199,10 +199,11 @@ defmodule AIS.Payload do
   # Interrogation (Message 15)
   # https://www.navcen.uscg.gov/pdf/AIS/ITU_R_M_1371_5_3_13_Message_15.pdf
   #
+  # Also has spurious datas at the end
   defp parse_message(message_id, payload) when message_id == 15 do
     <<repeat_indicator::2, source_id::30, spare1::2, destination_id_1::30, message_id_1::6,
       slot_offset_1::12, spare2::2, message_id_1_2::6, slot_offset_1_2::12, spare3::2,
-      destination_id_2::30, message_id_2::6, slot_offset_2::12, spare4::2>> = payload
+      destination_id_2::30, message_id_2::6, slot_offset_2::12, spare4::2, _::bitstring>> = payload
 
     %{
       repeat_indicator: repeat_indicator,
