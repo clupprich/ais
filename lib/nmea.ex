@@ -88,7 +88,13 @@ defmodule NMEA do
     name_with_checksum = String.to_atom(Atom.to_string(name) <> "_checksum")
 
     {field_and_checksum, list} = Keyword.pop(list, name_with_checksum)
-    [field, checksum] = String.split(field_and_checksum, "*")
+
+    [field, checksum] =
+      if length(String.split(field_and_checksum, "*")) == 2 do
+        String.split(field_and_checksum, "*")
+      else
+        [field_and_checksum, nil]
+      end
 
     new_list = Keyword.put([checksum: checksum], name, field)
     Keyword.merge(list, new_list)

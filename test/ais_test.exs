@@ -92,4 +92,25 @@ defmodule AISTest do
                 checksum: "55"
               }}
   end
+
+  test "invalid message" do
+    {:ok, ais} = AIS.new()
+    assert AIS.get(ais) == []
+
+    assert AIS.parse(ais, "!AIVDM,1,1,,B,E>jCfrv2`0c2h0W:0a2ah@@@@@@004WD>;2<H50hppN000,40A") ==
+             {:invalid_checksum,
+              %{
+                channel: "B",
+                checksum: nil,
+                current: "1",
+                formatter: "VDM",
+                padding: "40A",
+                payload: "E>jCfrv2`0c2h0W:0a2ah@@@@@@004WD>;2<H50hppN000",
+                sequential: "",
+                talker: "!AI",
+                total: "1"
+              }}
+
+    assert AIS.get(ais) == []
+  end
 end
