@@ -354,6 +354,20 @@ defmodule AisMessageTypesTest do
          type_of_electronic_position_fixing_device: 0,
          virtual_aton_flag: 0
        }},
+      # 22
+      {:ok, "!AIVDM,1,1,,B,F030p?j2N2P73FiiNesU3FR10000,0*32",
+       %{
+         channel: "B",
+         checksum: "32",
+         current: "1",
+         formatter: "VDM",
+         message_id: 22,
+         padding: "0",
+         payload: "F030p?j2N2P73FiiNesU3FR10000",
+         sequential: "",
+         talker: "!AI",
+         total: "1"
+       }},
       # 24 A
       {:ok, "!AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B",
        %{

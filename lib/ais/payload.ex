@@ -46,7 +46,7 @@ defmodule AIS.Payload do
       utc_minute::6, utc_second::6, position_accuracy::1, longitude::28, latitude::27,
       type_of_electronic_position_fixing_device::4,
       transmission_control_for_long_range_broadcast_message::1, spare::9, raim_flag::1,
-      communication_state::19>> = payload
+      communication_state::19, _::bitstring>> = payload
 
     %{
       repeat_indicator: repeat_indicator,
@@ -352,11 +352,47 @@ defmodule AIS.Payload do
     }
   end
 
+  # Channel management
+  # https://gpsd.gitlab.io/gpsd/AIVDM.html#_type_22_channel_management
+  # !AIVDM,1,1,,B,F030p?j2N2P73FiiNesU3FR10000,0*32
+  defp parse_message(message_id, _payload) when message_id == 22 do
+    %{}
+
+    # <<repeat_indicator::2, id::30, spare1::2, channel_a::12, channel_b::12, tx_rx::4, power::1,
+    #   ne_lon::18, ne_lat::17, sw_lon::18, sw_lat::17, dest_1_id::30, dest_2_id::30, addressed::1,
+    #   channel_a_band::1, channel_b_band::1, zone_size::3, spare2::23, _::bitstring>> = payload
+
+    # %{
+    #   repeat_indicator: repeat_indicator,
+    #   id: id,
+    #   spare1: spare1,
+    #   channel_a: channel_a,
+    #   channel_b: channel_b,
+    #   tx_rx: tx_rx,
+    #   power: power,
+    #   ne_lon: ne_lon,
+    #   ne_lat: ne_lat,
+    #   sw_lon: sw_lon,
+    #   sw_lat: sw_lat,
+    #   dest_1_id: dest_1_id,
+    #   dest_2_id: dest_2_id,
+    #   addressed: addressed,
+    #   channel_a_band: channel_a_band,
+    #   channel_b_band: channel_b_band,
+    #   zone_size: zone_size,
+    #   spare2: spare2
+    # }
+  end
+
   # MESSAGE 24: STATIC DATA REPORT (PART A)
   # https://www.navcen.uscg.gov/?pageName=AISMessagesB
   # !AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B      Part A
   # part_number=0 when part A
-  defp parse_message(message_id, <<repeat_indicator::2, user_id::30, part_number::2, name::120>>)
+  # For some reasons some garbage seems present sometime after the name
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, user_id::30, part_number::2, name::120>>
+       )
        when message_id == 24 do
     %{
       repeat_indicator: repeat_indicator,
@@ -397,4 +433,11 @@ defmodule AIS.Payload do
   # defp parse_message(message_id, _payload) when message_id == 24 do
   #  %{}
   # end
+
+  # Message 28 to 63 are reserved for future use
+  # 45 appeared in the NMEA sample
+  #
+  defp parse_message(message_id, _payload) when message_id in 28..63 do
+    %{}
+  end
 end
