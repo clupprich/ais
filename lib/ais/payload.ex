@@ -43,8 +43,8 @@ defmodule AIS.Payload do
   # !AIVDM,1,1,,A,402;bFQv@kkLc00Dl4LE52100@J6,0*58  ID 4
   defp parse_message(message_id, payload) when message_id == 4 or message_id == 11 do
     <<repeat_indicator::2, user_id::30, utc_year::14, utc_month::4, utc_day::5, utc_hour::5,
-      utc_minute::6, utc_second::6, position_accuracy::1, longitude::28, latitude::27,
-      type_of_electronic_position_fixing_device::4,
+      utc_minute::6, utc_second::6, position_accuracy::1, longitude::integer-signed-size(28),
+      latitude::integer-signed-size(27), type_of_electronic_position_fixing_device::4,
       transmission_control_for_long_range_broadcast_message::1, spare::9, raim_flag::1,
       communication_state::19, _::bitstring>> = payload
 
@@ -58,8 +58,8 @@ defmodule AIS.Payload do
       utc_minute: utc_minute,
       utc_second: utc_second,
       position_accuracy: position_accuracy,
-      longitude: longitude,
-      latitude: latitude,
+      longitude: longitude / 600000.0,
+      latitude: latitude / 600000.0,
       type_of_electronic_position_fixing_device: type_of_electronic_position_fixing_device,
       transmission_control_for_long_range_broadcast_message:
         transmission_control_for_long_range_broadcast_message,
