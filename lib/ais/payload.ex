@@ -14,7 +14,7 @@ defmodule AIS.Payload do
   # !AIVDM,1,1,,B,39NSDjP02201T0HLBJDBv2GD02s1,0*14  ID 3
   defp parse_message(message_id, payload)
        when message_id == 1 or message_id == 2 or message_id == 3 do
-    <<repeat_indicator::2, user_id::30, navigational_status::4, rate_of_turn::integer-signed-size(8), sog::10,
+    <<repeat_indicator::2, user_id::30, navigational_status::4, rate_of_turn::integer-signed-size(8), sog::integer-unsigned-size(10),
     position_accuracy::1, longitude::integer-signed-size(28), latitude::integer-signed-size(27), cog::12, true_heading::9, time_stamp::6,
     special_maneuvre_indicator::2, spare::3, raim_flag::1, communication_state::19,
       _::bitstring>> = payload
@@ -24,11 +24,11 @@ defmodule AIS.Payload do
       user_id: user_id,
       navigational_status: navigational_status,
       rate_of_turn: rate_of_turn,
-      sog: sog,
+      sog: sog / 10.0,
       position_accuracy: position_accuracy,
       longitude: longitude / 600000.0,
       latitude: latitude / 600000.0,
-      cog: cog,
+      cog: cog / 10.0,
       true_heading: true_heading,
       time_stamp: time_stamp,
       special_maneuvre_indicator: special_maneuvre_indicator,
