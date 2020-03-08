@@ -135,13 +135,16 @@ defmodule AIS.Payload do
   # https://www.navcen.uscg.gov/?pageName=AISMessage8
   # !AIVDM,1,1,,A,83HT5APj2P00000001BQJ@2E0000,0*72
   defp parse_message(message_id, payload) when message_id == 8 do
-    <<repeat_indicator::2, source_id::30, spare::2, _::bitstring>> = payload
-    # Binary data = max 968 bits
-    # TODO: how to handle that ?
+    <<repeat_indicator::2, source_id::30, spare::2, designated_area_code::10, functional_id::6,
+      data::bitstring>> = payload
+
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
-      spare: spare
+      spare: spare,
+      designated_area_code: designated_area_code,
+      functional_id: functional_id,
+      data: data
     }
   end
 
@@ -223,6 +226,7 @@ defmodule AIS.Payload do
   # MESSAGE 24: STATIC DATA REPORT (PART A)
   # https://www.navcen.uscg.gov/?pageName=AISMessagesB
   # !AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B      Part A
+  # part_number=0 when part A
   defp parse_message(message_id, <<repeat_indicator::2, user_id::30, part_number::2, name::120>>)
        when message_id == 24 do
     %{
@@ -235,6 +239,7 @@ defmodule AIS.Payload do
 
   # MESSAGE 24: STATIC DATA REPORT (PART B)
   # !AIVDM,1,1,,A,H3HOIFTl00000006Gqjhm01p?650,0*4F     Part B
+  # part_number=1 when part B
   defp parse_message(
          message_id,
          <<repeat_indicator::2, user_id::30, part_number::2, type_of_ship_and_cargo_type::8,
@@ -260,7 +265,7 @@ defmodule AIS.Payload do
 
   # Message 24 part A + B ???
   # Cannot make it to match any known struct, just return nothing and handle later...
-  defp parse_message(message_id, _payload) when message_id == 24 do
-    %{}
-  end
+  # defp parse_message(message_id, _payload) when message_id == 24 do
+  #  %{}
+  # end
 end
