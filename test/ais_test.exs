@@ -75,7 +75,7 @@ defmodule AISTest do
                 user_id: 369_190_000,
                 call_sign: "WDA9674",
                 type_of_ship_and_cargo_type: 99,
-                type_of_electronic_position_fixing_devise: 1,
+                type_of_electronic_position_fixing_device: 1,
                 eta: 70144,
                 maximum_present_static_draught: 60,
                 destination: "SEATTLE",
