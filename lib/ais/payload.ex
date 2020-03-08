@@ -267,6 +267,7 @@ defmodule AIS.Payload do
   # https://www.navcen.uscg.gov/pdf/AIS/ITU_R_M_1371_5_3_13_Message_15.pdf
   #
   # Also has spurious datas at the end
+  # TODO validate
   defp parse_message(message_id, payload) when message_id == 15 do
     <<repeat_indicator::2, source_id::30, spare1::2, destination_id_1::30, message_id_1::6,
       slot_offset_1::12, spare2::2, message_id_1_2::6, slot_offset_1_2::12, spare3::2,
@@ -315,9 +316,12 @@ defmodule AIS.Payload do
   # AIS GLOBAL NAVIGATION-SATELLITE SYSTEM BROADCAST BINARY MESSAGE (MESSAGE 17)
   # https://www.navcen.uscg.gov/?pageName=AISMessage17
   # !AIVDM,1,1,,A,A04757QAv0agH2JdGlLP7Oqa0@TGw9H170,4*5A
+  # TODO: parse the Differential Correction Data Table
   defp parse_message(
          message_id,
-         <<repeat_indicator::2, source_id::30, spare1::2, longitude::18, latitude::17, spare2::5,
+         <<repeat_indicator::2, source_id::30, spare1::2,
+         longitude::integer-signed-size(18), latitude::integer-signed-size(17),
+         spare2::5,
            data::bitstring>>
        )
        when message_id == 17 do
@@ -325,8 +329,8 @@ defmodule AIS.Payload do
       repeat_indicator: repeat_indicator,
       source_id: source_id,
       spare1: spare1,
-      longitude: longitude,
-      latitude: latitude,
+      longitude: longitude / 600_000.0,
+      latitude: latitude / 600_000.0,
       spare2: spare2,
       data: data
     }
