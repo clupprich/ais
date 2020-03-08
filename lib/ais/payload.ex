@@ -343,8 +343,9 @@ defmodule AIS.Payload do
   # !AIVDM,1,1,,B,B3HOIj000H08MeW52k4F7wo5oP06,0*42
   # Seems to have spurious datas sometime at the end or undocumented values
   defp parse_message(message_id, payload) when message_id == 18 do
-    <<repeat_indicator::2, user_id::30, spare1::8, sog::10, position_accuracy::1, longitude::28,
-      latitude::27, cog::12, true_heading::9, time_stamp::6, spare2::2, class_b_unit_flag::1,
+    <<repeat_indicator::2, user_id::30, spare1::8, sog::10, position_accuracy::1,
+    longitude::integer-signed-size(28), latitude::integer-signed-size(27),
+     cog::12, true_heading::9, time_stamp::6, spare2::2, class_b_unit_flag::1,
       class_b_display_flag::1, class_b_dsc_flag::1, class_b_band_flag::1,
       class_b_message_22_flag::1, mode_flag::1, raim_flag::1,
       communication_state_selector_flag::1, communication_state::19, _::bitstring>> = payload
@@ -353,11 +354,11 @@ defmodule AIS.Payload do
       repeat_indicator: repeat_indicator,
       user_id: user_id,
       spare1: spare1,
-      sog: sog,
+      sog: sog / 10.0,
       position_accuracy: position_accuracy,
-      longitude: longitude,
-      latitude: latitude,
-      cog: cog,
+      longitude: longitude / 600_000.0,
+      latitude: latitude / 600_000.0,
+      cog: cog / 10.0,
       true_heading: true_heading,
       time_stamp: time_stamp,
       spare2: spare2,
