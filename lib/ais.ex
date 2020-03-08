@@ -11,10 +11,10 @@ defmodule AIS do
         {parse_state, sentence}
 
       sentence[:total] == "1" ->
-        attributes = AIS.Payload.parse(sentence.payload)
+        {state, attributes} = AIS.Payload.parse(sentence.payload)
         sentence = Map.merge(attributes, sentence)
 
-        {:ok, sentence}
+        {state, sentence}
 
       sentence[:total] == sentence[:current] ->
         [first_sentence | _tail] = Agent.get(pid, fn list -> list end)
@@ -24,10 +24,10 @@ defmodule AIS do
             {payload, first_sentence.payload <> payload}
           end)
 
-        attributes = AIS.Payload.parse(sentence.payload)
+        {state, attributes} = AIS.Payload.parse(sentence.payload)
         sentence = Map.merge(attributes, sentence)
 
-        {:ok, sentence}
+        {state, sentence}
 
       true ->
         Agent.update(pid, fn list -> [sentence | list] end)

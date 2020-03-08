@@ -3,9 +3,13 @@ defmodule AIS.Payload do
     payload = SixBit.decode(payload)
 
     <<message_id::6, tail::bitstring>> = payload
-    attributes = parse_message(message_id, tail)
 
-    Map.merge(%{message_id: message_id}, attributes)
+    try do
+      attributes = parse_message(message_id, tail)
+      {:ok, Map.merge(%{message_id: message_id}, attributes)}
+    rescue MatchError ->
+      {:invalid, %{}}
+    end
   end
 
   # Class A AIS Position Report (Messages 1, 2, and 3)
