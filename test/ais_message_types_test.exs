@@ -384,7 +384,8 @@ defmodule AisMessageTypesTest do
          repeat_indicator: 0,
          user_id: 227_006_920,
          part_number: 0,
-         name: "GLOUTON"
+         name: "GLOUTON",
+         spare: 0
        }},
       # 24 B
       {:ok, "!AIVDM,1,1,,A,H3HOIFTl00000006Gqjhm01p?650,0*4F",

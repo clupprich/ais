@@ -402,6 +402,21 @@ defmodule AIS.Payload do
     }
   end
 
+  # Apparently the spare should be 8, might use the size of "spare of part B"...
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, user_id::30, part_number::2, name::120, spare::2>>
+       )
+       when message_id == 24 do
+    %{
+      repeat_indicator: repeat_indicator,
+      user_id: user_id,
+      part_number: part_number,
+      name: SixBit.get_string(name, 120),
+      spare: spare
+    }
+  end
+
   # MESSAGE 24: STATIC DATA REPORT (PART B)
   # !AIVDM,1,1,,A,H3HOIFTl00000006Gqjhm01p?650,0*4F     Part B
   # part_number=1 when part B
