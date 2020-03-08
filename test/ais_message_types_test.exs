@@ -42,6 +42,33 @@ defmodule AisMessageTypesTest do
          user_id: 228_237_700
        }},
       # 2
+      {:ok, "!AIVDM,1,1,,A,23aDrf0P12PBCNpMKVQ4OOvfR0S0,0*3E", %{
+        channel: "A",
+        checksum: "3E",
+        cog: 1149,
+        communication_state: 2240,
+        current: "1",
+        formatter: "VDM",
+        latitude: 30860932,
+        longitude: 2399196,
+        message_id: 2,
+        navigational_status: 0,
+        padding: "0",
+        payload: "23aDrf0P12PBCNpMKVQ4OOvfR0S0",
+        position_acucuracy: 1,
+        raim_flag: 1,
+        rate_of_turn: 128,
+        repeat_indicator: 0,
+        sequential: "",
+        sog: 66,
+        spare: 0,
+        special_manoeuvre_indicator: 1,
+        talker: "!AI",
+        time_stamp: 23,
+        total: "1",
+        true_heading: 511,
+        user_id: 244660920
+      }},
       # 3
       {:ok, "!AIVDM,1,1,,B,39NSDjP02201T0HLBJDBv2GD02s1,0*14",
        %{
@@ -101,7 +128,7 @@ defmodule AisMessageTypesTest do
          utc_second: 43,
          utc_year: 2020
        }},
-      # 5
+      # 5 (only fragmented messages)
       # 6
       {:ok, "!AIVDM,1,1,,A,6>jCKIkfJjOt>db;q700@20,2*16",
        %{
@@ -210,6 +237,34 @@ defmodule AisMessageTypesTest do
          total: "1"
        }},
       # 11
+      {:ok, "!AIVDM,1,1,,A,;028j>iuho;PLO0ARF@EEmG008AG,0*31", %{
+        channel: "A",
+        checksum: "31",
+        communication_state: 33879,
+        current: "1",
+        formatter: "VDM",
+        latitude: 17126869,
+        longitude: 260082763,
+        message_id: 11,
+        padding: "0",
+        payload: ";028j>iuho;PLO0ARF@EEmG008AG",
+        position_accuracy: 0,
+        raim_flag: 0,
+        repeat_indicator: 0,
+        sequential: "",
+        spare: 0,
+        talker: "!AI",
+        total: "1",
+        transmission_control_for_long_range_broadcast_message: 0,
+        type_of_electronic_position_fixing_device: 7,
+        user_id: 2241083,
+        utc_day: 14,
+        utc_hour: 11,
+        utc_minute: 32,
+        utc_month: 3,
+        utc_second: 28,
+        utc_year: 2012
+      }},
       # 15
       # 16
       {:ok, "!AIVDM,1,1,,B,@6STUk004lQ206bCKNOBAb6SJ@5s,0*74",
@@ -369,7 +424,7 @@ defmodule AisMessageTypesTest do
          talker: "!AI",
          total: "1"
        }},
-      # 23
+      # 23 (only fragmented messages)
       # 24 A
       {:ok, "!AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B",
        %{
@@ -414,7 +469,7 @@ defmodule AisMessageTypesTest do
          user_id: 227_006_810,
          vendor_id: 0
        }}
-      # 25
+      # 25 (only fragmented messages)
     ]
   end
 end
