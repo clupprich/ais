@@ -93,6 +93,61 @@ defmodule AISTest do
               }}
   end
 
+  test "multi-sentence message 2" do
+    {:ok, ais} = AIS.new()
+    assert AIS.get(ais) == []
+
+    assert AIS.parse(
+             ais,
+             "!AIVDM,2,1,2,B,5772M702@R<qI98O>20M84pB1E84qE>22222221?3;?H84kb0GiT`31B8888,0*22"
+           ) ==
+             {:incomplete,
+              %{
+                talker: "!AI",
+                formatter: "VDM",
+                total: "2",
+                current: "1",
+                sequential: "2",
+                channel: "B",
+                payload: "5772M702@R<qI98O>20M84pB1E84qE>22222221?3;?H84kb0GiT`31B8888",
+                padding: "0",
+                checksum: "22"
+              }}
+
+    assert AIS.parse(ais, "!AIVDM,2,2,2,B,88888888880,2*25") ==
+             {:ok,
+              %{
+                talker: "!AI",
+                formatter: "VDM",
+                total: "2",
+                current: "2",
+                sequential: "2",
+                channel: "B",
+                message_id: 5,
+                ais_version_indicator: 0,
+                imo_number: 9472206,
+                repeat_indicator: 0,
+                user_id: 477142300,
+                call_sign: "VRRG3  ",
+                type_of_ship_and_cargo_type: 79,
+                type_of_electronic_position_fixing_devise: 1,
+                eta: 211584,
+                maximum_present_static_draught: 95,
+                destination: "FR LEH              ",
+                name: "GRAND URANUS        ",
+                dimension_a: 25,
+                dimension_b: 207,
+                dimension_c: 24,
+                dimension_d: 8,
+                dte: 0,
+                spare: 0,
+                payload:
+                  "5772M702@R<qI98O>20M84pB1E84qE>22222221?3;?H84kb0GiT`31B888888888888880",
+                padding: "2",
+                checksum: "25"
+              }}
+  end
+
   test "invalid message" do
     {:ok, ais} = AIS.new()
     assert AIS.get(ais) == []
