@@ -480,6 +480,66 @@ defmodule AisMessageTypesTest do
               }}
   end
 
+  test "message type 15 - 1 mmsi" do
+    {:ok, ais} = AIS.new()
+    assert AIS.get(ais) == []
+
+    assert AIS.parse(ais, "!AIVDM,1,1,,A,?5OP=l00052HD00,2*5B") ==
+             {:ok,
+              %{
+                channel: "A",
+                checksum: "5B",
+                current: "1",
+                destination_id_1: 5158,
+                formatter: "VDM",
+                message_id: 15,
+                message_id_1: 5,
+                padding: "2",
+                payload: "?5OP=l00052HD00",
+                repeat_indicator: 0,
+                sequential: "",
+                slot_offset_1: 0,
+                source_id: 368_578_000,
+                spare1: 0,
+                talker: "!AI",
+                total: "1"
+              }}
+  end
+
+  test "message type 15 - 2 mmsi" do
+    {:ok, ais} = AIS.new()
+    assert AIS.get(ais) == []
+
+    assert AIS.parse(ais, "!AIVDM,1,1,,A,?39a?2PjKFFPD01o:Gq1igvp2<3w,0*0B") ==
+             {:ok,
+              %{
+                channel: "A",
+                checksum: "0B",
+                current: "1",
+                destination_id_1: 211_507_560,
+                destination_id_2: 605_843_451,
+                formatter: "VDM",
+                message_id: 15,
+                message_id_1: 5,
+                message_id_1_2: 55,
+                message_id_2: 32,
+                padding: "0",
+                payload: "?39a?2PjKFFPD01o:Gq1igvp2<3w",
+                repeat_indicator: 0,
+                sequential: "",
+                slot_offset_1: 0,
+                slot_offset_1_2: 663,
+                slot_offset_2: 560,
+                source_id: 211_439_370,
+                spare1: 0,
+                spare2: 1,
+                spare3: 3,
+                spare4: 0,
+                talker: "!AI",
+                total: "1"
+              }}
+  end
+
   test "message type 16" do
     {:ok, ais} = AIS.new()
     assert AIS.get(ais) == []
