@@ -13,8 +13,13 @@ defmodule NMEAAishubSampleTest do
     |> String.split()
     |> Enum.each(fn x ->
       # IO.inspect(x)
-      {result, _} = AIS.parse(ais, x)
-      assert result in [:ok, :incomplete]
+      case AIS.parse(ais, x) do
+        {a, {b, _}} ->
+         assert a == :error
+         assert b in [:incomplete, :invalid, :invalid_checksum]
+        {a, _} ->
+         assert a == :ok
+      end
     end)
   end
 end

@@ -15,7 +15,7 @@ defmodule NMEA do
       iex> NMEA.parse("$GPGLL,5133.81,N,00042.25,W*75")
       {:ok, %{talker: "$GP", formatter: "GLL", latitude: "5133.81", north_south: "N", longitude: "00042.25", east_west: "W", checksum: "75"}}
   """
-  @spec parse(binary) :: {:invalid_checksum, any} | {:ok, any}
+  @spec parse(binary) :: {:error, {:invalid_checksum, any}} | {:ok, any}
   def parse(string) when is_binary(string) do
     values = String.split(string, ",")
     {talker, formatter} = String.split_at(List.first(values), 3)
@@ -23,7 +23,11 @@ defmodule NMEA do
 
     {state, decoded} = decode(Enum.at(values, 0), Enum.at(values, 1), values)
 
-    {state, Enum.into(decoded, %{})}
+    if state != :ok do
+      {:error, {state, Enum.into(decoded, %{})}}
+    else
+      {state, Enum.into(decoded, %{})}
+    end
   end
 
   # Decode !AIVDM and !BSVDM messages
