@@ -11,7 +11,6 @@ defmodule AisMessageTypesTest do
                        {result, sentence} = AIS.parse(ais, x)
 
                        if result == :ok do
-                         assert result == :ok
                          assert sentence == struct
                        end
                      end)
@@ -135,6 +134,39 @@ defmodule AisMessageTypesTest do
          utc_year: 2020
        }},
       # 5 (only fragmented messages)
+      {[
+         "!AIVDM,2,1,9,B,53qH`N0286j=<p8b220ti`62222222222222221?9p;554oF0;B3k51CPEH8,0*58",
+         "!AIVDM,2,2,9,B,88888888880,2*2E"
+       ],
+       %{
+         ais_version_indicator: 0,
+         call_sign: "SNBJ   ",
+         channel: "B",
+         checksum: "2E",
+         current: "2",
+         destination: "HOLTENAU            ",
+         dimension_a: 79,
+         dimension_b: 11,
+         dimension_c: 5,
+         dimension_d: 5,
+         dte: 0,
+         eta: %{day: 14, hour: 22, minute: 0, month: 3},
+         formatter: "VDM",
+         imo_number: 8_919_843,
+         maximum_present_static_draught: 4.5,
+         message_id: 5,
+         name: "OLZA                ",
+         padding: "2",
+         payload: "53qH`N0286j=<p8b220ti`62222222222222221?9p;554oF0;B3k51CPEH888888888880",
+         repeat_indicator: 0,
+         sequential: "9",
+         spare: 0,
+         talker: "!AI",
+         total: "2",
+         type_of_electronic_position_fixing_device: 1,
+         type_of_ship_and_cargo_type: 79,
+         user_id: 261_499_000
+       }},
       # 6
       {["!AIVDM,1,1,,A,6>jCKIkfJjOt>db;q700@20,2*16"],
        %{
