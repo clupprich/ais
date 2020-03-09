@@ -8,8 +8,13 @@ defmodule AIS.Payload do
 
   Takes a `bitstring()` and return `{:ok, Map}` when decoding succeede, or `{:invalid, %{}}`.
   """
+
+  # See https://www.itu.int/dms_pubrec/itu-r/rec/m/R-REC-M.1371-1-200108-S!!PDF-E.pdf
+  # for packet formats
+
   @spec parse(binary()) :: {:invalid, %{}} | {:ok, any()}
   def parse(payload) do
+    orig_payload = payload
     payload = SixBit.decode(payload)
 
     <<message_id::6, tail::bitstring>> = payload
@@ -18,7 +23,11 @@ defmodule AIS.Payload do
       attributes = parse_message(message_id, tail)
       {:ok, Map.merge(%{message_id: message_id}, attributes)}
     rescue
-      MatchError ->
+      e in MatchError ->
+        IO.puts(
+          "Error decoding message type #{message_id} '#{orig_payload}': " <> Exception.message(e)
+        )
+
         {:invalid, %{}}
     end
   end
@@ -531,37 +540,33 @@ defmodule AIS.Payload do
   end
 
   # Channel management
-  # https://gpsd.gitlab.io/gpsd/AIVDM.html#_type_22_channel_management
+  # https://www.itu.int/dms_pubrec/itu-r/rec/m/R-REC-M.1371-1-200108-S!!PDF-E.pdf page 66
   # !AIVDM,1,1,,B,F030p?j2N2P73FiiNesU3FR10000,0*32
-  defp parse_message(message_id, _payload) when message_id == 22 do
-    %{}
+  # !AIVDM,1,1,,B,F030pD22N2P5iQAoR;H6SQ010000,0*7F
+  defp parse_message(message_id, payload) when message_id == 22 do
+    <<repeat_indicator::2, id::30, spare1::2, channel_a::12, channel_b::12, tx_rx::4, power::1,
+      ne_lon::integer-signed-size(18), ne_lat::integer-signed-size(17),
+      sw_lon::integer-signed-size(18), sw_lat::integer-signed-size(17), addressed::1,
+      channel_a_band::1, channel_b_band::1, zone_size::3, spare2::23>> = payload
 
-    # TODO handle this message
-
-    # <<repeat_indicator::2, id::30, spare1::2, channel_a::12, channel_b::12, tx_rx::4, power::1,
-    #   ne_lon::18, ne_lat::17, sw_lon::18, sw_lat::17, dest_1_id::30, dest_2_id::30, addressed::1,
-    #   channel_a_band::1, channel_b_band::1, zone_size::3, spare2::23, _::bitstring>> = payload
-
-    # %{
-    #   repeat_indicator: repeat_indicator,
-    #   id: id,
-    #   spare1: spare1,
-    #   channel_a: channel_a,
-    #   channel_b: channel_b,
-    #   tx_rx: tx_rx,
-    #   power: power,
-    #   ne_lon: ne_lon,
-    #   ne_lat: ne_lat,
-    #   sw_lon: sw_lon,
-    #   sw_lat: sw_lat,
-    #   dest_1_id: dest_1_id,
-    #   dest_2_id: dest_2_id,
-    #   addressed: addressed,
-    #   channel_a_band: channel_a_band,
-    #   channel_b_band: channel_b_band,
-    #   zone_size: zone_size,
-    #   spare2: spare2
-    # }
+    %{
+      repeat_indicator: repeat_indicator,
+      id: id,
+      spare1: spare1,
+      channel_a: channel_a,
+      channel_b: channel_b,
+      tx_rx: tx_rx,
+      power: power,
+      ne_lon: ne_lon / 600_000.0,
+      ne_lat: ne_lat / 600_000.0,
+      sw_lon: sw_lon / 600_000.0,
+      sw_lat: sw_lat / 600_000.0,
+      addressed: addressed,
+      channel_a_band: channel_a_band,
+      channel_b_band: channel_b_band,
+      zone_size: zone_size,
+      spare2: spare2
+    }
   end
 
   # Group assignment command
