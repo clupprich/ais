@@ -840,4 +840,38 @@ defmodule AisMessageTypesTest do
                 total: "2"
               }}
   end
+
+  test "message type 27" do
+    {:ok, ais} = AIS.new()
+    assert AIS.get(ais) == []
+
+    assert AIS.parse(
+             ais,
+             "!AIVDM,1,1,,A,KCQ9r=hrFUnH7P00,0*41"
+           ) ==
+             {:ok,
+              %{
+                channel: "A",
+                checksum: "41",
+                cog: 0,
+                current: "1",
+                formatter: "VDM",
+                latitude: 87.065,
+                longitude: -154.20166666666665,
+                message_id: 27,
+                navigational_status: 3,
+                padding: "0",
+                payload: "KCQ9r=hrFUnH7P00",
+                position_accuracy: 0,
+                position_latency: 0,
+                raim_flag: 0,
+                repeat_indicator: 1,
+                sequential: "",
+                sog: 0,
+                spare: 0,
+                talker: "!AI",
+                total: "1",
+                user_id: 236_091_959
+              }}
+  end
 end

@@ -715,6 +715,33 @@ defmodule AIS.Payload do
     msg
   end
 
+  # LONG-RANGE AUTOMATIC IDENTIFCATION SYSTEM BROADCAST MESSAGE (MESSAGE 27)
+  # https://www.navcen.uscg.gov/?pageName=AISMessage27
+  # !AIVDM,1,1,,A,KCQ9r=hrFUnH7P00,0*41
+  defp parse_message(
+         message_id,
+         payload
+       )
+       when message_id == 27 do
+    <<repeat_indicator::2, user_id::30, position_accuracy::1, raim_flag::1,
+      navigational_status::4, longitude::integer-signed-size(18),
+      latitude::integer-signed-size(17), sog::6, cog::9, position_latency::1, spare::1>> = payload
+
+    %{
+      repeat_indicator: repeat_indicator,
+      user_id: user_id,
+      position_accuracy: position_accuracy,
+      raim_flag: raim_flag,
+      navigational_status: navigational_status,
+      longitude: longitude / 600.0,
+      latitude: latitude / 600.0,
+      sog: sog,
+      cog: cog,
+      position_latency: position_latency,
+      spare: spare
+    }
+  end
+
   # Message 28 to 63 are reserved for future use
   # 45 appeared in the NMEA sample
   defp parse_message(message_id, _payload) when message_id in 28..63 do
