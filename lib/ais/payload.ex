@@ -160,7 +160,7 @@ defmodule AIS.Payload do
          <<repeat_indicator::2, source_id::30, spare::2, id_1::30, seq_1::2, id_2::30, seq_2::2,
            id_3::30, seq_3::2, id_4::30, seq_4::2, _::bitstring>>
        )
-       when message_id == 7 do
+       when message_id == 7 or message_id == 13 do
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
@@ -182,7 +182,7 @@ defmodule AIS.Payload do
          <<repeat_indicator::2, source_id::30, spare::2, id_1::30, seq_1::2, id_2::30, seq_2::2,
            id_3::30, seq_3::2, _::bitstring>>
        )
-       when message_id == 7 do
+       when message_id == 7 or message_id == 13 do
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
@@ -202,7 +202,7 @@ defmodule AIS.Payload do
          <<repeat_indicator::2, source_id::30, spare::2, id_1::30, seq_1::2, id_2::30, seq_2::2,
            _::bitstring>>
        )
-       when message_id == 7 do
+       when message_id == 7 or message_id == 13 do
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
@@ -219,7 +219,7 @@ defmodule AIS.Payload do
          message_id,
          <<repeat_indicator::2, source_id::30, spare::2, id_1::30, seq_1::2, _::bitstring>>
        )
-       when message_id == 7 do
+       when message_id == 7 or message_id == 13 do
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
