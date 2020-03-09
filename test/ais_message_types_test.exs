@@ -319,7 +319,15 @@ defmodule AisMessageTypesTest do
          channel: "A",
          checksum: "5A",
          current: "1",
-         data: <<38, 172, 95, 71, 32, 29, 254, 105, 1, 9, 23, 252, 150, 1, 28, 0::size(4)>>,
+         data: %{
+          dcdt_message_type: 9,
+          dcdt_station_id: 684,
+          dcdt_z_count: 3048,
+          dcdt_sequence_number: 7,
+          dcdt_n: 4,
+          dcdt_health: 0,
+          dcdt_dgnss_data_word: <<29, 254, 105, 1, 9, 23, 252, 150, 1, 28, 0::size(4)>>
+        },
          formatter: "VDM",
          latitude: 0.035618333333333335,
          longitude: 0.13989333333333334,

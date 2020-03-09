@@ -376,13 +376,16 @@ defmodule AIS.Payload do
   # AIS GLOBAL NAVIGATION-SATELLITE SYSTEM BROADCAST BINARY MESSAGE (MESSAGE 17)
   # https://www.navcen.uscg.gov/?pageName=AISMessage17
   # !AIVDM,1,1,,A,A04757QAv0agH2JdGlLP7Oqa0@TGw9H170,4*5A
-  # TODO: parse the Differential Correction Data Table
   defp parse_message(
          message_id,
          <<repeat_indicator::2, source_id::30, spare1::2, longitude::integer-signed-size(18),
            latitude::integer-signed-size(17), spare2::5, data::bitstring>>
        )
        when message_id == 17 do
+
+    # Legacy DGNSS datas
+    <<dcdt_message_type::6, dcdt_station_id::10, dcdt_z_count::13, dcdt_sequence_number::3, dcdt_n::5, dcdt_health::3, dcdt_dgnss_data_word::bitstring>> = data
+
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
@@ -390,10 +393,16 @@ defmodule AIS.Payload do
       longitude: longitude / 600_000.0,
       latitude: latitude / 600_000.0,
       spare2: spare2,
-      data: data
+      data: %{
+        dcdt_message_type: dcdt_message_type,
+        dcdt_station_id: dcdt_station_id,
+        dcdt_z_count: dcdt_z_count,
+        dcdt_sequence_number: dcdt_sequence_number,
+        dcdt_n: dcdt_n,
+        dcdt_health: dcdt_health,
+        dcdt_dgnss_data_word: dcdt_dgnss_data_word
+      }
     }
-
-    # TODO decode data struct
   end
 
   # AIS Standard Class B Equipment Position Report (Message 18)
