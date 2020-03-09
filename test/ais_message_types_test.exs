@@ -777,6 +777,8 @@ defmodule AisMessageTypesTest do
                 longitude: 0.0315,
                 message_id: 21,
                 name_of_aids_to_navigation: "EPAVE ANTARES       ",
+                name_extension: "",
+                assembled_name: "EPAVE ANTARES       ",
                 off_position_indicator: 0,
                 padding: "4",
                 payload: "E>jCfrv2`0c2h0W:0a2ah@@@@@@004WD>;2<H50hppN000",
@@ -790,6 +792,62 @@ defmodule AisMessageTypesTest do
                 total: "1",
                 type_of_aids_to_navigation: 28,
                 type_of_electronic_position_fixing_device: 0,
+                virtual_aton_flag: 0
+              }}
+  end
+
+  test "message type 21 - extension" do
+    {:ok, ais} = AIS.new()
+    assert AIS.get(ais) == []
+
+    assert AIS.parse(ais, "!AIVDM,2,1,5,B,E1mg=5J1T4W0h97aRh6ba84<h2d;W:Te=eLvH50```q,0*46") ==
+             {:error,
+              {:incomplete,
+               %{
+                 channel: "B",
+                 checksum: "46",
+                 current: "1",
+                 formatter: "VDM",
+                 padding: "0",
+                 payload: "E1mg=5J1T4W0h97aRh6ba84<h2d;W:Te=eLvH50```q",
+                 sequential: "5",
+                 talker: "!AI",
+                 total: "2"
+               }}}
+
+    assert AIS.parse(ais, "!AIVDM,2,2,5,B,:D44QDlp0C1DU00,2*36") ==
+             {:ok,
+              %{
+                assigned_mode_flag: 0,
+                aton_status: 165,
+                channel: "B",
+                checksum: "36",
+                current: "2",
+                dimension_a: 5,
+                dimension_b: 5,
+                dimension_c: 5,
+                dimension_d: 5,
+                formatter: "VDM",
+                id: 123_456_789,
+                latitude: 47.92061833333333,
+                longitude: -122.69859166666667,
+                message_id: 21,
+                name_of_aids_to_navigation: "CHINA ROSE MURPHY EX",
+                name_extension: "PRESS ALERT",
+                assembled_name: "CHINA ROSE MURPHY EXPRESS ALERT",
+                off_position_indicator: 0,
+                padding: "2",
+                payload: "E1mg=5J1T4W0h97aRh6ba84<h2d;W:Te=eLvH50```q:D44QDlp0C1DU00",
+                position_accuracy: 0,
+                raim_flag: 0,
+                repeat_indicator: 0,
+                sequential: "5",
+                spare: 0,
+                talker: "!AI",
+                time_stamp: 50,
+                total: "2",
+                type_of_aids_to_navigation: 20,
+                type_of_electronic_position_fixing_device: 1,
                 virtual_aton_flag: 0
               }}
   end

@@ -640,16 +640,26 @@ defmodule AIS.Payload do
       dimension_a::9, dimension_b::9, dimension_c::6, dimension_d::6,
       type_of_electronic_position_fixing_device::4, time_stamp::6, off_position_indicator::1,
       aton_status::8, raim_flag::1, virtual_aton_flag::1, assigned_mode_flag::1, spare::1,
-      _::bitstring>> = payload
+      name_extension::bitstring>> = payload
 
-    # TODO Extra dynamic fields after the last spare:
-    #  Name of Aid-to-Navigation Extension 	0, 6, 12, 18, 24, 30, 36, ... 84
-    #  Spare 	0, 2, 4, or 6
+    name_extension_size = bit_size(name_extension)
+
+    name_extension =
+      if name_extension_size >= 6 and name_extension_size < 84 do
+        rounded = Kernel.floor(name_extension_size / 6) * 6
+        <<name::size(rounded), _::bitstring>> = name_extension
+        SixBit.get_string(name, rounded)
+      else
+        ""
+      end
+
+    name = SixBit.get_string(name_of_aids_to_navigation, 120)
+
     %{
       repeat_indicator: repeat_indicator,
       id: id,
       type_of_aids_to_navigation: type_of_aids_to_navigation,
-      name_of_aids_to_navigation: SixBit.get_string(name_of_aids_to_navigation, 120),
+      name_of_aids_to_navigation: name,
       position_accuracy: position_accuracy,
       longitude: longitude / 600_000.0,
       latitude: latitude / 600_000.0,
@@ -664,7 +674,9 @@ defmodule AIS.Payload do
       raim_flag: raim_flag,
       virtual_aton_flag: virtual_aton_flag,
       assigned_mode_flag: assigned_mode_flag,
-      spare: spare
+      spare: spare,
+      name_extension: name_extension,
+      assembled_name: name <> name_extension
     }
   end
 
