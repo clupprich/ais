@@ -1,11 +1,12 @@
 defmodule SixBit do
   @doc """
 
-  Examples:
+  ## Example
 
-  iex> SixBit.decode('14eG')
-  <<4, 75, 87>>
+      iex> SixBit.decode('14eG')
+      <<4, 75, 87>>
   """
+  @spec decode(binary() | maybe_improper_list()) :: bitstring()
   def decode(string) when is_binary(string) do
     to_charlist(string)
     |> decode
@@ -19,14 +20,15 @@ defmodule SixBit do
   @doc """
   Converts a single character.
 
-  Examples:
+  ## Examples
 
-  iex> SixBit.convert(0)
-  <<16::size(6)>>
+      iex> SixBit.convert(0)
+      <<16::size(6)>>
 
-  iex> SixBit.convert(1)
-  <<17::size(6)>>
+      iex> SixBit.convert(1)
+      <<17::size(6)>>
   """
+  @spec convert(integer()) :: <<_::6>>
   def convert(char) do
     char6bit = if char - 48 > 40, do: char - 56, else: char - 48
     <<char6bit::size(6)>>
@@ -35,13 +37,15 @@ defmodule SixBit do
   @doc """
   Converts a 6bit value to a 8bit ASCII string.
 
-  Examples:
-  iex> SixBit.get_string(1584874876404, 42)
-  "WDA9674"
+  ## Examples
 
-  iex> SixBit.get_string(276724096922795722993303089619927040, 120)
-  "MT.MITCHELL"
+      iex> SixBit.get_string(1584874876404, 42)
+      "WDA9674"
+
+      iex> SixBit.get_string(276724096922795722993303089619927040, 120)
+      "MT.MITCHELL"
   """
+  @spec get_string(integer(), non_neg_integer()) :: binary()
   def get_string(value, length) do
     chunks(<<value::size(length)>>, 6)
     |> Enum.map(&bitstring_to_binary/1)
@@ -53,16 +57,18 @@ defmodule SixBit do
   @doc """
   Converts a 6bit ASCII character (represented as an integer) to an 8bit ASCII character.
 
-  Examples:
-  iex> SixBit.get_character(0)
-  "@"
+  ## Examples
 
-  iex> SixBit.get_character(48)
-  "0"
+      iex> SixBit.get_character(0)
+      "@"
 
-  iex> SixBit.get_character(32)
-  " "
+      iex> SixBit.get_character(48)
+      "0"
+
+      iex> SixBit.get_character(32)
+      " "
   """
+  @spec get_character(binary | maybe_improper_list(any, binary | []) | integer) :: binary
   def get_character(bitstring) when is_bitstring(bitstring) do
     value = :binary.decode_unsigned(bitstring)
     get_character(value)

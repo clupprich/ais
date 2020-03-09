@@ -8,7 +8,16 @@ defmodule AIS.Mixfile do
       elixir: "~> 1.2",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+
+      # Docs
+      name: "ais",
+      source_url: "https://github.com/clupprich/ais",
+      homepage_url: "https://github.com/clupprich/ais",
+      docs: [
+        main: "AIS",
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -30,7 +39,8 @@ defmodule AIS.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:ex_parameterized, "~> 1.3.7"}
+      {:ex_parameterized, "~> 1.3.7"},
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false}
     ]
   end
 end

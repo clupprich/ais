@@ -1,4 +1,6 @@
 defmodule AIS.Payload do
+  @moduledoc false
+
   def parse(payload) do
     payload = SixBit.decode(payload)
 
@@ -7,8 +9,9 @@ defmodule AIS.Payload do
     try do
       attributes = parse_message(message_id, tail)
       {:ok, Map.merge(%{message_id: message_id}, attributes)}
-    rescue MatchError ->
-      {:invalid, %{}}
+    rescue
+      MatchError ->
+        {:invalid, %{}}
     end
   end
 
@@ -277,11 +280,13 @@ defmodule AIS.Payload do
   # The  parameters  destination  ID1,  message  ID1.1,  slot  offset  1.1,  destination  ID2,
   # message ID2.1, and slot offset 2.1 should be defined.
   # The parameters message ID1.2 and slot offset 1.2 should be set to zero (0)
-  defp parse_message(message_id, <<repeat_indicator::2, source_id::30, spare1::2, destination_id_1::30, message_id_1::6,
-  slot_offset_1::12, spare2::2, message_id_1_2::6, slot_offset_1_2::12, spare3::2,
-  destination_id_2::30, message_id_2::6, slot_offset_2::12, spare4::2,
-  _::bitstring>>) when message_id == 15 do
-
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, source_id::30, spare1::2, destination_id_1::30, message_id_1::6,
+           slot_offset_1::12, spare2::2, message_id_1_2::6, slot_offset_1_2::12, spare3::2,
+           destination_id_2::30, message_id_2::6, slot_offset_2::12, spare4::2, _::bitstring>>
+       )
+       when message_id == 15 do
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
@@ -302,9 +307,12 @@ defmodule AIS.Payload do
 
   # One  (1)  station  is  interrogated  two  (2)  messages:  The  parameters  destination  ID1,  message  ID1.1,  slot  offset  1.1,  message  ID1.2,
   # and  slot  offset  1.2  should  be  defined. The parameters destination ID2, message ID2.1, and slot offset 2.1 should be omitted.
-  defp parse_message(message_id, <<repeat_indicator::2, source_id::30, spare1::2, destination_id_1::30, message_id_1::6,
-  slot_offset_1::12, spare2::2, message_id_1_2::6, slot_offset_1_2::12, _::bitstring>>) when message_id == 15 do
-
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, source_id::30, spare1::2, destination_id_1::30, message_id_1::6,
+           slot_offset_1::12, spare2::2, message_id_1_2::6, slot_offset_1_2::12, _::bitstring>>
+       )
+       when message_id == 15 do
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
@@ -320,16 +328,19 @@ defmodule AIS.Payload do
 
   # One (1) station is interrogated one (1) message: The parameters destination ID1, message ID1.1 and slot offset 1.1
   # should be defined. All other parameters should be omitted.
-  defp parse_message(message_id, <<repeat_indicator::2, source_id::30, spare1::2, destination_id_1::30, message_id_1::6,
-  slot_offset_1::12, _::bitstring>>) when message_id == 15 do
-
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, source_id::30, spare1::2, destination_id_1::30, message_id_1::6,
+           slot_offset_1::12, _::bitstring>>
+       )
+       when message_id == 15 do
     %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
       spare1: spare1,
       destination_id_1: destination_id_1,
       message_id_1: message_id_1,
-      slot_offset_1: slot_offset_1,
+      slot_offset_1: slot_offset_1
     }
   end
 

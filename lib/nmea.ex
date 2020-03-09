@@ -1,16 +1,21 @@
 defmodule NMEA do
   use Bitwise
 
-  @doc """
-  Parses an NMEA sentence and returns a `Map`.
-
-  Examples:
-  iex> NMEA.parse("!AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0*5C")
-  {:ok, %{talker: "!AI", formatter: "VDM", total: "1", current: "1", sequential: "", channel: "B", payload: "177KQJ5000G?tO`K>RA1wUbN0TKH", padding: "0", checksum: "5C"}}
-
-  iex> NMEA.parse("$GPGLL,5133.81,N,00042.25,W*75")
-  {:ok, %{talker: "$GP", formatter: "GLL", latitude: "5133.81", north_south: "N", longitude: "00042.25", east_west: "W", checksum: "75"}}
+  @moduledoc """
+  Handle the parsing of the NMEA sentence.
   """
+
+  @doc """
+  Parses a single NMEA sentence and returns a `Map`.
+
+  ## Examples
+      iex> NMEA.parse("!AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0*5C")
+      {:ok, %{talker: "!AI", formatter: "VDM", total: "1", current: "1", sequential: "", channel: "B", payload: "177KQJ5000G?tO`K>RA1wUbN0TKH", padding: "0", checksum: "5C"}}
+
+      iex> NMEA.parse("$GPGLL,5133.81,N,00042.25,W*75")
+      {:ok, %{talker: "$GP", formatter: "GLL", latitude: "5133.81", north_south: "N", longitude: "00042.25", east_west: "W", checksum: "75"}}
+  """
+  @spec parse(binary) :: {:invalid_checksum, any} | {:ok, any}
   def parse(string) when is_binary(string) do
     values = String.split(string, ",")
     {talker, formatter} = String.split_at(List.first(values), 3)
@@ -22,8 +27,8 @@ defmodule NMEA do
   end
 
   # Decode !AIVDM and !BSVDM messages
-  def decode(talker, formatter, values)
-      when (talker == "!AI" or talker == "!BS") and formatter == "VDM" do
+  defp decode(talker, formatter, values)
+       when (talker == "!AI" or talker == "!BS") and formatter == "VDM" do
     keys = [
       :talker,
       :formatter,
@@ -46,7 +51,7 @@ defmodule NMEA do
   end
 
   # Decode $GPGLL messages
-  def decode(talker, formatter, values) when talker == "$GP" and formatter == "GLL" do
+  defp decode(talker, formatter, values) when talker == "$GP" and formatter == "GLL" do
     keys = [:talker, :formatter, :latitude, :north_south, :longitude, :east_west_checksum]
 
     decoded = checksum(Enum.zip(keys, values), :east_west)
@@ -59,10 +64,8 @@ defmodule NMEA do
     end
   end
 
-  @doc """
-  Calculate the checksum
-  """
-  def calculate_aivdm_checksum(list) do
+  # Calculate checksum for !AIVDM / !BSVDM
+  defp calculate_aivdm_checksum(list) do
     "#{String.slice(list[:talker], 1..2)}#{list[:formatter]},#{list[:total]},#{list[:current]},#{
       list[:sequential]
     },#{list[:channel]},#{list[:payload]},#{list[:padding]}"
@@ -72,7 +75,8 @@ defmodule NMEA do
     |> String.pad_leading(2, "0")
   end
 
-  def calculate_gpgll_checksum(list) do
+  # Calculate checksum for $GPGLL
+  defp calculate_gpgll_checksum(list) do
     "#{String.slice(list[:talker], 1..2)}#{list[:formatter]},#{list[:latitude]},#{
       list[:north_south]
     },#{list[:longitude]},#{list[:east_west]}"
@@ -82,10 +86,8 @@ defmodule NMEA do
     |> String.pad_leading(2, "0")
   end
 
-  @doc """
-  Splits the entry with the key `name` of the keyword `list` and adds it to 'list'.
-  """
-  def checksum(list, name) do
+  # Splits the entry with the key `name` of the keyword `list` and adds it to 'list'.
+  defp checksum(list, name) do
     name_with_checksum = String.to_atom(Atom.to_string(name) <> "_checksum")
 
     {field_and_checksum, list} = Keyword.pop(list, name_with_checksum)

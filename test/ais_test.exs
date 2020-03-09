@@ -1,5 +1,6 @@
 defmodule AISTest do
   use ExUnit.Case, async: true
+  doctest AIS
 
   test "single sentence message" do
     {:ok, ais} = AIS.new()
