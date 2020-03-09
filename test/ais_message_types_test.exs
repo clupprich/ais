@@ -3,17 +3,21 @@ defmodule AisMessageTypesTest do
   use ExUnit.Parameterized
 
   test_with_params "test known ais messages id",
-                   fn expected, msg, struct ->
+                   fn msgs, struct ->
                      {:ok, ais} = AIS.new()
                      assert AIS.get(ais) == []
 
-                     {result, _} = AIS.parse(ais, msg)
-                     assert result == :ok
-                     assert AIS.parse(ais, msg) == {expected, struct}
+                     Enum.each(msgs, fn x ->
+                      {result, sentence} = AIS.parse(ais, x)
+                      if result == :ok do
+                        assert result == :ok
+                        assert sentence == struct
+                      end
+                     end)
                    end do
     [
       # 1
-      {:ok, "!AIVDM,1,1,,B,13IbQQ000100lq`LD7J6Vi<n88AM,0*52",
+      {["!AIVDM,1,1,,B,13IbQQ000100lq`LD7J6Vi<n88AM,0*52"],
        %{
          channel: "B",
          checksum: "52",
@@ -42,7 +46,7 @@ defmodule AisMessageTypesTest do
          user_id: 228_237_700
        }},
       # 2
-      {:ok, "!AIVDM,1,1,,A,23aDrf0P12PBCNpMKVQ4OOvfR0S0,0*3E",
+      {["!AIVDM,1,1,,A,23aDrf0P12PBCNpMKVQ4OOvfR0S0,0*3E"],
        %{
          channel: "A",
          checksum: "3E",
@@ -71,7 +75,7 @@ defmodule AisMessageTypesTest do
          user_id: 244_660_920
        }},
       # 3
-      {:ok, "!AIVDM,1,1,,B,39NSDjP02201T0HLBJDBv2GD02s1,0*14",
+      {["!AIVDM,1,1,,B,39NSDjP02201T0HLBJDBv2GD02s1,0*14"],
        %{
          channel: "B",
          checksum: "14",
@@ -100,7 +104,7 @@ defmodule AisMessageTypesTest do
          user_id: 636_015_818
        }},
       # 4
-      {:ok, "!AIVDM,1,1,,A,402;bFQv@kkLc00Dl4LE52100@J6,0*58",
+      {["!AIVDM,1,1,,A,402;bFQv@kkLc00Dl4LE52100@J6,0*58"],
        %{
          channel: "A",
          checksum: "58",
@@ -131,7 +135,7 @@ defmodule AisMessageTypesTest do
        }},
       # 5 (only fragmented messages)
       # 6
-      {:ok, "!AIVDM,1,1,,A,6>jCKIkfJjOt>db;q700@20,2*16",
+      {["!AIVDM,1,1,,A,6>jCKIkfJjOt>db;q700@20,2*16"],
        %{
          channel: "A",
          checksum: "16",
@@ -153,7 +157,7 @@ defmodule AisMessageTypesTest do
          application_identifier: 15050
        }},
       # 7
-      {:ok, "!AIVDM,1,1,,A,777QkG00RW38,0*62",
+      {["!AIVDM,1,1,,A,777QkG00RW38,0*62"],
        %{
          channel: "A",
          checksum: "62",
@@ -172,7 +176,7 @@ defmodule AisMessageTypesTest do
          seq_1: 0
        }},
       # 8
-      {:ok, "!AIVDM,1,1,,A,83HT5APj2P00000001BQJ@2E0000,0*72",
+      {["!AIVDM,1,1,,A,83HT5APj2P00000001BQJ@2E0000,0*72"],
        %{
          channel: "A",
          checksum: "72",
@@ -191,7 +195,7 @@ defmodule AisMessageTypesTest do
          data: <<0, 0, 0, 0, 0, 0, 20, 161, 105, 0, 149, 0, 0, 0>>
        }},
       # 9
-      {:ok, "!AIVDM,1,1,,B,91b55vRAirOn<94M097lV@@20<6=,0*5D",
+      {["!AIVDM,1,1,,B,91b55vRAirOn<94M097lV@@20<6=,0*5D"],
        %{
          altitude: 583,
          altitude_sensor: 0,
@@ -222,7 +226,7 @@ defmodule AisMessageTypesTest do
          user_id: 111_232_506
        }},
       # 10
-      {:ok, "!AIVDM,1,1,,A,:81:Jf1D02J0,0*0E",
+      {["!AIVDM,1,1,,A,:81:Jf1D02J0,0*0E"],
        %{
          channel: "A",
          checksum: "0E",
@@ -241,7 +245,7 @@ defmodule AisMessageTypesTest do
          total: "1"
        }},
       # 11
-      {:ok, "!AIVDM,1,1,,A,;028j>iuho;PLO0ARF@EEmG008AG,0*31",
+      {["!AIVDM,1,1,,A,;028j>iuho;PLO0ARF@EEmG008AG,0*31"],
        %{
          channel: "A",
          checksum: "31",
@@ -271,7 +275,7 @@ defmodule AisMessageTypesTest do
          utc_year: 2012
        }},
       # 15
-      {:ok, "!AIVDM,1,1,,B,?8Hw7D1HLskPD00,2*55",
+      {["!AIVDM,1,1,,B,?8Hw7D1HLskPD00,2*55"],
        %{
          channel: "B",
          checksum: "55",
@@ -291,7 +295,7 @@ defmodule AisMessageTypesTest do
          total: "1"
        }},
       # 16
-      {:ok, "!AIVDM,1,1,,B,@6STUk004lQ206bCKNOBAb6SJ@5s,0*74",
+      {["!AIVDM,1,1,,B,@6STUk004lQ206bCKNOBAb6SJ@5s,0*74"],
        %{
          channel: "B",
          checksum: "74",
@@ -314,7 +318,7 @@ defmodule AisMessageTypesTest do
          total: "1"
        }},
       # 17
-      {:ok, "!AIVDM,1,1,,A,A04757QAv0agH2JdGlLP7Oqa0@TGw9H170,4*5A",
+      {["!AIVDM,1,1,,A,A04757QAv0agH2JdGlLP7Oqa0@TGw9H170,4*5A"],
        %{
          channel: "A",
          checksum: "5A",
@@ -343,7 +347,7 @@ defmodule AisMessageTypesTest do
          total: "1"
        }},
       # 18
-      {:ok, "!AIVDM,1,1,,B,B3HOIj000H08MeW52k4F7wo5oP06,0*42",
+      {["!AIVDM,1,1,,B,B3HOIj000H08MeW52k4F7wo5oP06,0*42"],
        %{
          channel: "B",
          checksum: "42",
@@ -377,7 +381,7 @@ defmodule AisMessageTypesTest do
          user_id: 227_006_920
        }},
       # 19
-      {:ok, "!AIVDM,1,1,,B,C69DqeP0Ar8;JH3R6<4O7wWPl@:62L>jcaQgh0000000?104222P,0*32",
+      {["!AIVDM,1,1,,B,C69DqeP0Ar8;JH3R6<4O7wWPl@:62L>jcaQgh0000000?104222P,0*32"],
        %{
          assigned_mode_flag: 0,
          channel: "B",
@@ -413,7 +417,7 @@ defmodule AisMessageTypesTest do
          user_id: 412_432_822
        }},
       # 21
-      {:ok, "!AIVDM,1,1,,B,E>jCfrv2`0c2h0W:0a2ah@@@@@@004WD>;2<H50hppN000,4*0A",
+      {["!AIVDM,1,1,,B,E>jCfrv2`0c2h0W:0a2ah@@@@@@004WD>;2<H50hppN000,4*0A"],
        %{
          assigned_mode_flag: 0,
          aton_status: 0,
@@ -446,7 +450,7 @@ defmodule AisMessageTypesTest do
          virtual_aton_flag: 0
        }},
       # 22
-      {:ok, "!AIVDM,1,1,,B,F030p?j2N2P73FiiNesU3FR10000,0*32",
+      {["!AIVDM,1,1,,B,F030p?j2N2P73FiiNesU3FR10000,0*32"],
        %{
          channel: "B",
          checksum: "32",
@@ -461,7 +465,7 @@ defmodule AisMessageTypesTest do
        }},
       # 23 (only fragmented messages)
       # 24 A
-      {:ok, "!AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B",
+      {["!AIVDM,1,1,,A,H3HOIj0LhuE@tp0000000000000,2*2B"],
        %{
          channel: "A",
          checksum: "2B",
@@ -479,7 +483,7 @@ defmodule AisMessageTypesTest do
          name: "GLOUTON"
        }},
       # 24 B
-      {:ok, "!AIVDM,1,1,,A,H3HOIFTl00000006Gqjhm01p?650,0*4F",
+      {["!AIVDM,1,1,,A,H3HOIFTl00000006Gqjhm01p?650,0*4F"],
        %{
          call_sign: "FW9205",
          channel: "A",
@@ -503,8 +507,29 @@ defmodule AisMessageTypesTest do
          type_of_ship_and_cargo_type: 52,
          user_id: 227_006_810,
          vendor_id: ""
-       }}
+       }},
       # 25 (only fragmented messages)
+      {["!AIVDM,2,1,3,A,I`1ifG20UrcNTFE?UgLeo@Dk:o6G4hhI8;?vW2?El>Deju@c3Si451FJd9WPU<>B,0*04",
+      "!AIVDM,2,2,3,A,gML6TO918o:?6uoOFu3k@=vE,3*41"], %{
+        binary_data: <<128, 151, 170, 222, 145, 101, 79, 150, 247, 45, 221, 5, 51, 43, 113, 151, 19,
+        12, 25, 32, 179, 254, 156, 35, 213, 208, 229, 45, 203, 212, 43, 14, 60, 68,
+        20, 21, 154, 176, 153, 224, 148, 195, 146, 189, 215, 6, 145, 242, 65, 35, 114,
+        143, 27, 221, 223, 91, 208, 243, 64, 223, 149>>,
+        binary_data_flag: 0,
+        channel: "A",
+        checksum: "41",
+        current: "2",
+        destination_indicator: 0,
+        formatter: "VDM",
+        message_id: 25,
+        padding: "3",
+        payload: "I`1ifG20UrcNTFE?UgLeo@Dk:o6G4hhI8;?vW2?El>Deju@c3Si451FJd9WPU<>BgML6TO918o:?6uoOFu3k@=vE",
+        repeat_indicator: 2,
+        sequential: "3",
+        source_id: 538734172,
+        talker: "!AI",
+        total: "2"
+      }}
     ]
   end
 end
