@@ -620,16 +620,35 @@ defmodule AIS.Payload do
   # !AIVDM,2,2,3,A,gML6TO918o:?6uoOFu3k@=vE,3*41
   defp parse_message(message_id, payload) when message_id == 25 do
     <<repeat_indicator::2, source_id::30, destination_indicator::1, binary_data_flag::1,
-      _::bitstring>> = payload
+      bindata::bitstring>> = payload
 
-    # destination_id is either 0 or 30, used or not, etc.
-    # TODO handle
-    %{
+    msg = %{
       repeat_indicator: repeat_indicator,
       source_id: source_id,
       destination_indicator: destination_indicator,
       binary_data_flag: binary_data_flag
     }
+
+    # Add destination_id and spare if destination_indicator == 0 else ignore it
+    msg = if destination_indicator == 1 do
+      <<destination_id::30, spare::2>> = bindata
+      Map.put(msg, :destination_id, destination_id)
+      Map.put(msg, :spare, spare)
+    else
+      msg
+    end
+
+    msg = if binary_data_flag == 1 do
+      <<application_identifier::16, binary_data::bitstring>> = bindata
+      Map.put(msg, :application_identifier, application_identifier)
+      Map.put(msg, :binary_data, binary_data)
+    else
+      <<binary_data::bitstring>> = bindata
+      Map.put(msg, :binary_data, binary_data)
+    end
+
+    msg
+
   end
 
   # Message 28 to 63 are reserved for future use
