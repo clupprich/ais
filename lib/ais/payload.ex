@@ -292,6 +292,26 @@ defmodule AIS.Payload do
     }
   end
 
+  # AIS ADDRESSED SAFETY RELATED MESSAGE (MESSAGE 12)
+  # https://www.navcen.uscg.gov/?pageName=AISMessage12
+  # !AIVDM,1,1,,A,<42Lati0W:Ov=C7P6B?=Pjoihhjhqq0,2*2B
+  defp parse_message(message_id, payload) when message_id == 12 do
+    <<repeat_indicator::2, source_id::30, sequence_number::2, destination_id::30, retransmit_flag::1, spare::1, safety_related_text::bitstring>> = payload
+
+    safety_text_size = bit_size(safety_related_text)
+    <<safety_text::size(safety_text_size)>> = safety_related_text
+
+    %{
+      repeat_indicator: repeat_indicator,
+      source_id: source_id,
+      sequence_number: sequence_number,
+      destination_id: destination_id,
+      retransmit_flag: retransmit_flag,
+      spare: spare,
+      safety_related_text: SixBit.get_string(safety_text, safety_text_size),
+    }
+  end
+
   # Interrogation (Message 15)
   # https://www.navcen.uscg.gov/pdf/AIS/ITU_R_M_1371_5_3_13_Message_15.pdf
   #
