@@ -1,4 +1,8 @@
 defmodule SixBit do
+  @moduledoc """
+  Six-bit ASCII decoder.
+  """
+
   @doc """
 
   ## Example
