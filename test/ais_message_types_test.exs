@@ -704,6 +704,39 @@ defmodule AisMessageTypesTest do
               }}
   end
 
+  test "message type 23" do
+    {:ok, ais} = AIS.new()
+    assert AIS.get(ais) == []
+
+    assert AIS.parse(ais, "!AIVDM,1,1,,B,G02:Kn01R`sn@291nj600000900,2*12") ==
+             {:ok,
+              %{
+                channel: "B",
+                checksum: "12",
+                current: "1",
+                formatter: "VDM",
+                interval: 9,
+                message_id: 23,
+                ne_lat: 0.05107,
+                ne_lon: 0.00263,
+                padding: "2",
+                payload: "G02:Kn01R`sn@291nj600000900",
+                quiet: 0,
+                repeat_indicator: 0,
+                sequential: "",
+                ship_type: 0,
+                spare1: 0,
+                spare2: 0,
+                station_type: 6,
+                sw_lat: 0.05068,
+                sw_lon: 0.0018266666666666668,
+                talker: "!AI",
+                total: "1",
+                tx_rx: 0,
+                user_id: 2_268_120
+              }}
+  end
+
   test "message type 24 part A" do
     {:ok, ais} = AIS.new()
     assert AIS.get(ais) == []

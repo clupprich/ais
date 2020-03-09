@@ -609,12 +609,27 @@ defmodule AIS.Payload do
 
   # Group assignment command
   # https://gpsd.gitlab.io/gpsd/AIVDM.html#_type_23_group_assignment_command
-  # !AIVDM,3,1,9,A,8h30otA?0@<o;NPPP2?k<oRWU5;si0R7@00o;NPPP2?lEoRQgU;j@17V@00o;NPP,0*62
-  # !AIVDM,3,2,9,A,GeF1<oQDN5;>aQ8H@00o;NPPPP3D<oPPEU;M418a@00o;NPPGeCD1oOEPU:WtQ8d,0*4D
-  # !AIVDM,3,3,9,A,@00o;NPPPPC=DoN0lU:2WQ8u@00,2*56
-  defp parse_message(message_id, _payload) when message_id == 23 do
-    # TODO handle this message
-    %{}
+  # !AIVDM,1,1,,B,G02:Kn01R`sn@291nj600000900,2*12
+  defp parse_message(message_id, payload) when message_id == 23 do
+    <<repeat_indicator::2, user_id::30, spare1::2, ne_lon::18, ne_lat::17, sw_lon::18, sw_lat::17,
+      station_type::4, ship_type::8, spare2::22, tx_rx::2, interval::4, quiet::4,
+      _::bitstring>> = payload
+
+    %{
+      repeat_indicator: repeat_indicator,
+      user_id: user_id,
+      spare1: spare1,
+      ne_lon: ne_lon / 600_000.0,
+      ne_lat: ne_lat / 600_000.0,
+      sw_lon: sw_lon / 600_000.0,
+      sw_lat: sw_lat / 600_000.0,
+      station_type: station_type,
+      ship_type: ship_type,
+      spare2: spare2,
+      tx_rx: tx_rx,
+      interval: interval,
+      quiet: quiet
+    }
   end
 
   # MESSAGE 24: STATIC DATA REPORT (PART B)
