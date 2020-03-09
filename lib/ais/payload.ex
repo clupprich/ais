@@ -1,6 +1,14 @@
 defmodule AIS.Payload do
-  @moduledoc false
+  @moduledoc """
+  Handle decoding of the AIS Payload to a convenient `Map`.
+  """
 
+  @doc """
+  Parse an AIS payload.
+
+  Takes a `bitstring()` and return `{:ok, Map}` when decoding succeede, or `{:invalid, %{}}`.
+  """
+  @spec parse(binary()) :: {:invalid, %{}} | {:ok, any()}
   def parse(payload) do
     payload = SixBit.decode(payload)
 
