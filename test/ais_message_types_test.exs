@@ -430,6 +430,30 @@ defmodule AisMessageTypesTest do
               }}
   end
 
+  test "message type 14" do
+    {:ok, ais} = AIS.new()
+    assert AIS.get(ais) == []
+
+    assert AIS.parse(ais, "!AIVDM,1,1,,A,>5?Per18=HB1U:1@E=B0m<L,2*51") ==
+             {:ok,
+              %{
+                channel: "A",
+                checksum: "51",
+                current: "1",
+                formatter: "VDM",
+                message_id: 14,
+                padding: "2",
+                payload: ">5?Per18=HB1U:1@E=B0m<L",
+                repeat_indicator: 0,
+                safety_related_text: "RCVD YR TEST MSG",
+                sequential: "",
+                source_id: 351809000,
+                spare: 0,
+                talker: "!AI",
+                total: "1"
+              }}
+  end
+
   test "message type 15" do
     {:ok, ais} = AIS.new()
     assert AIS.get(ais) == []

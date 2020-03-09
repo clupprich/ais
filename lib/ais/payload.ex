@@ -298,8 +298,8 @@ defmodule AIS.Payload do
   defp parse_message(message_id, payload) when message_id == 12 do
     <<repeat_indicator::2, source_id::30, sequence_number::2, destination_id::30, retransmit_flag::1, spare::1, safety_related_text::bitstring>> = payload
 
-    safety_text_size = bit_size(safety_related_text)
-    <<safety_text::size(safety_text_size)>> = safety_related_text
+    safety_text_size = Kernel.floor(bit_size(safety_related_text) / 6) * 6
+    <<safety_text::size(safety_text_size), _::bitstring>> = safety_related_text
 
     %{
       repeat_indicator: repeat_indicator,
@@ -307,6 +307,23 @@ defmodule AIS.Payload do
       sequence_number: sequence_number,
       destination_id: destination_id,
       retransmit_flag: retransmit_flag,
+      spare: spare,
+      safety_related_text: SixBit.get_string(safety_text, safety_text_size),
+    }
+  end
+
+  # AIS SAFETY RELATED BROADCAST MESSAGE (MESSAGE 14)
+  # https://www.navcen.uscg.gov/?pageName=AISMessage14
+  # !AIVDM,1,1,,A,>5?Per18=HB1U:1@E=B0m<L,2*51
+  defp parse_message(message_id, payload) when message_id == 14 do
+    <<repeat_indicator::2, source_id::30, spare::2, safety_related_text::bitstring>> = payload
+
+    safety_text_size = Kernel.floor(bit_size(safety_related_text) / 6) * 6
+    <<safety_text::size(safety_text_size), _::bitstring>> = safety_related_text
+
+    %{
+      repeat_indicator: repeat_indicator,
+      source_id: source_id,
       spare: spare,
       safety_related_text: SixBit.get_string(safety_text, safety_text_size),
     }
