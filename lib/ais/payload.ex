@@ -534,10 +534,101 @@ defmodule AIS.Payload do
 
   # Data link management message
   # https://gpsd.gitlab.io/gpsd/AIVDM.html#_type_20_data_link_management_message
-  # !AIVDM,1,1,,A,D02:rbR<Tffp5AN9H0,4*7F
-  defp parse_message(message_id, _payload) when message_id == 20 do
-    # TODO
-    %{}
+  # !AIVDM,1,1,,A,Dh3OvjB8IN>4,0*1D
+  # 4 offsets
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, id::30, _::2, offset_1::12, slots_1::4, timeout_1::3,
+           increment_1::11, offset_2::12, slots_2::4, timeout_2::3, increment_2::11, offset_3::12,
+           slots_3::4, timeout_3::3, increment_3::11, offset_4::12, slots_4::4, timeout_4::3,
+           increment_4::11, _::bitstring>>
+       )
+       when message_id == 20 do
+    %{
+      repeat_indicator: repeat_indicator,
+      id: id,
+      offset_1: offset_1,
+      slots_1: slots_1,
+      timeout_1: timeout_1,
+      increment_1: increment_1,
+      offset_2: offset_2,
+      slots_2: slots_2,
+      timeout_2: timeout_2,
+      increment_2: increment_2,
+      offset_3: offset_3,
+      slots_3: slots_3,
+      timeout_3: timeout_3,
+      increment_3: increment_3,
+      offset_4: offset_4,
+      slots_4: slots_4,
+      timeout_4: timeout_4,
+      increment_4: increment_4
+    }
+  end
+
+  # 3 offsets
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, id::30, _::2, offset_1::12, slots_1::4, timeout_1::3,
+           increment_1::11, offset_2::12, slots_2::4, timeout_2::3, increment_2::11, offset_3::12,
+           slots_3::4, timeout_3::3, increment_3::11, _::bitstring>>
+       )
+       when message_id == 20 do
+    %{
+      repeat_indicator: repeat_indicator,
+      id: id,
+      offset_1: offset_1,
+      slots_1: slots_1,
+      timeout_1: timeout_1,
+      increment_1: increment_1,
+      offset_2: offset_2,
+      slots_2: slots_2,
+      timeout_2: timeout_2,
+      increment_2: increment_2,
+      offset_3: offset_3,
+      slots_3: slots_3,
+      timeout_3: timeout_3,
+      increment_3: increment_3
+    }
+  end
+
+  # 2 offsets
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, id::30, _::2, offset_1::12, slots_1::4, timeout_1::3,
+           increment_1::11, offset_2::12, slots_2::4, timeout_2::3, increment_2::11,
+           _::bitstring>>
+       )
+       when message_id == 20 do
+    %{
+      repeat_indicator: repeat_indicator,
+      id: id,
+      offset_1: offset_1,
+      slots_1: slots_1,
+      timeout_1: timeout_1,
+      increment_1: increment_1,
+      offset_2: offset_2,
+      slots_2: slots_2,
+      timeout_2: timeout_2,
+      increment_2: increment_2
+    }
+  end
+
+  # 1 offset
+  defp parse_message(
+         message_id,
+         <<repeat_indicator::2, id::30, _::2, offset_1::12, slots_1::4, timeout_1::3,
+           increment_1::11, _::bitstring>>
+       )
+       when message_id == 20 do
+    %{
+      repeat_indicator: repeat_indicator,
+      id: id,
+      offset_1: offset_1,
+      slots_1: slots_1,
+      timeout_1: timeout_1,
+      increment_1: increment_1
+    }
   end
 
   # AIS Aids To Navigation (ATON) Report (Message 21)

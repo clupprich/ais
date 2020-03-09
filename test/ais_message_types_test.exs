@@ -629,6 +629,72 @@ defmodule AisMessageTypesTest do
               }}
   end
 
+  test "message type 20 - 1 offset" do
+    {:ok, ais} = AIS.new()
+    assert AIS.get(ais) == []
+
+    assert AIS.parse(
+             ais,
+             "!AIVDM,1,1,,A,Dh3OvjB8IN>4,0*1D"
+           ) ==
+             {:ok,
+              %{
+                channel: "A",
+                checksum: "1D",
+                current: "1",
+                formatter: "VDM",
+                id: 3_669_705,
+                increment_1: 225,
+                message_id: 20,
+                offset_1: 2182,
+                padding: "0",
+                payload: "Dh3OvjB8IN>4",
+                repeat_indicator: 3,
+                sequential: "",
+                slots_1: 5,
+                talker: "!AI",
+                timeout_1: 7,
+                total: "1"
+              }}
+  end
+
+  test "message type 20 - 3 offsets" do
+    {:ok, ais} = AIS.new()
+    assert AIS.get(ais) == []
+
+    assert AIS.parse(
+             ais,
+             "!AIVDM,1,1,,B,D030p8@2tN?b<`O6DmQO6D0,2*5D"
+           ) ==
+             {:ok,
+              %{
+                channel: "B",
+                checksum: "5D",
+                current: "1",
+                formatter: "VDM",
+                id: 3_160_097,
+                increment_1: 250,
+                increment_2: 1125,
+                increment_3: 1125,
+                message_id: 20,
+                offset_1: 47,
+                offset_2: 2250,
+                offset_3: 856,
+                padding: "2",
+                payload: "D030p8@2tN?b<`O6DmQO6D0",
+                repeat_indicator: 0,
+                sequential: "",
+                slots_1: 1,
+                slots_2: 1,
+                slots_3: 5,
+                talker: "!AI",
+                timeout_1: 7,
+                timeout_2: 7,
+                timeout_3: 7,
+                total: "1"
+              }}
+  end
+
   test "message type 21" do
     {:ok, ais} = AIS.new()
     assert AIS.get(ais) == []
