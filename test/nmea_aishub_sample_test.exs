@@ -16,7 +16,7 @@ defmodule NMEAAishubSampleTest do
       case AIS.parse(ais, x) do
         {a, {b, _}} ->
           assert a == :error
-          assert b in [:incomplete]
+          assert b in [:incomplete, :invalid]
 
         {a, _} ->
           assert a == :ok
