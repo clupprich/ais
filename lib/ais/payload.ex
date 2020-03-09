@@ -787,8 +787,10 @@ defmodule AIS.Payload do
     msg =
       if destination_indicator == 1 do
         <<destination_id::30, spare::2>> = bindata
-        Map.put(msg, :destination_id, destination_id)
-        Map.put(msg, :spare, spare)
+
+        msg
+        |> Map.put(:destination_id, destination_id)
+        |> Map.put(:spare, spare)
       else
         msg
       end
@@ -796,14 +798,60 @@ defmodule AIS.Payload do
     msg =
       if binary_data_flag == 1 do
         <<application_identifier::16, binary_data::bitstring>> = bindata
-        Map.put(msg, :application_identifier, application_identifier)
-        Map.put(msg, :binary_data, binary_data)
+
+        msg
+        |> Map.put(:application_identifier, application_identifier)
+        |> Map.put(:binary_data, binary_data)
       else
         <<binary_data::bitstring>> = bindata
         Map.put(msg, :binary_data, binary_data)
       end
 
     msg
+  end
+
+  # MULTIPLE SLOT BINARY MESSAGE WITH COMMUNICATIONS STATE (MESSAGE 26)
+  # https://www.navcen.uscg.gov/?pageName=AISMessage26
+  # !AIVDM,1,1,,A,J1@@0IK70PGgT740000000000@000?D0ih1e00006JlPC9C3,0*6B
+  # That message format isn't friendly at all, but seems very rare so not really great decoding expected for now
+  defp parse_message(
+         message_id,
+         payload
+       )
+       when message_id == 26 do
+    <<repeat_indicator::2, user_id::30, destination_indicator::1, binary_data_flag::1,
+      bindata::bitstring>> = payload
+
+    msg = %{
+      repeat_indicator: repeat_indicator,
+      user_id: user_id,
+      destination_indicator: destination_indicator,
+      binary_data_flag: binary_data_flag
+    }
+
+    # Add destination_id and spare if destination_indicator == 0 else ignore it
+    {msg, bindata} =
+      if destination_indicator == 1 do
+        <<destination_id::30, spare::2, bindat::bitstring>> = bindata
+        {Map.merge(msg, %{destination_id: destination_id, spare: spare}), bindat}
+      else
+        {msg, bindata}
+      end
+
+    {msg, bindata} =
+      if destination_indicator == 0 do
+        # broadcast
+        <<binary_data::104, bindat::bitstring>> = bindata
+        {Map.merge(msg, %{binary_data: binary_data}), bindat}
+      else
+        # addressed
+        <<binary_data::72, bindat::bitstring>> = bindata
+        {Map.merge(msg, %{binary_data: binary_data}), bindat}
+      end
+
+    bin_size = bit_size(bindata) - 20
+    <<binary_datas::size(bin_size), radio_status::20>> = bindata
+    Map.merge(msg, %{binary_data: binary_datas, radio_status: radio_status})
   end
 
   # LONG-RANGE AUTOMATIC IDENTIFCATION SYSTEM BROADCAST MESSAGE (MESSAGE 27)

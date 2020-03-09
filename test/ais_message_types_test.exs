@@ -967,6 +967,37 @@ defmodule AisMessageTypesTest do
               }}
   end
 
+  test "message type 26 - addressed and not structured" do
+    {:ok, ais} = AIS.new()
+    assert AIS.get(ais) == []
+
+    assert AIS.parse(
+             ais,
+             "!AIVDM,1,1,,A,J1@@0IK70PGgT740000000000@000?D0ih1e00006JlPC9C3,0*6B"
+           ) ==
+             {:ok,
+              %{
+                binary_data: 83_076_754_475_605_189_869_857_356_738_384_388,
+                binary_data_flag: 0,
+                channel: "A",
+                checksum: "6B",
+                current: "1",
+                destination_id: 834_699_643,
+                destination_indicator: 1,
+                formatter: "VDM",
+                message_id: 26,
+                padding: "0",
+                payload: "J1@@0IK70PGgT740000000000@000?D0ih1e00006JlPC9C3",
+                radio_status: 824_515,
+                repeat_indicator: 0,
+                sequential: "",
+                spare: 3,
+                talker: "!AI",
+                total: "1",
+                user_id: 84_148_325
+              }}
+  end
+
   test "message type 27" do
     {:ok, ais} = AIS.new()
     assert AIS.get(ais) == []
