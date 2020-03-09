@@ -382,9 +382,9 @@ defmodule AIS.Payload do
            latitude::integer-signed-size(17), spare2::5, data::bitstring>>
        )
        when message_id == 17 do
-
     # Legacy DGNSS datas
-    <<dcdt_message_type::6, dcdt_station_id::10, dcdt_z_count::13, dcdt_sequence_number::3, dcdt_n::5, dcdt_health::3, dcdt_dgnss_data_word::bitstring>> = data
+    <<dcdt_message_type::6, dcdt_station_id::10, dcdt_z_count::13, dcdt_sequence_number::3,
+      dcdt_n::5, dcdt_health::3, dcdt_dgnss_data_word::bitstring>> = data
 
     %{
       repeat_indicator: repeat_indicator,
@@ -630,25 +630,26 @@ defmodule AIS.Payload do
     }
 
     # Add destination_id and spare if destination_indicator == 0 else ignore it
-    msg = if destination_indicator == 1 do
-      <<destination_id::30, spare::2>> = bindata
-      Map.put(msg, :destination_id, destination_id)
-      Map.put(msg, :spare, spare)
-    else
-      msg
-    end
+    msg =
+      if destination_indicator == 1 do
+        <<destination_id::30, spare::2>> = bindata
+        Map.put(msg, :destination_id, destination_id)
+        Map.put(msg, :spare, spare)
+      else
+        msg
+      end
 
-    msg = if binary_data_flag == 1 do
-      <<application_identifier::16, binary_data::bitstring>> = bindata
-      Map.put(msg, :application_identifier, application_identifier)
-      Map.put(msg, :binary_data, binary_data)
-    else
-      <<binary_data::bitstring>> = bindata
-      Map.put(msg, :binary_data, binary_data)
-    end
+    msg =
+      if binary_data_flag == 1 do
+        <<application_identifier::16, binary_data::bitstring>> = bindata
+        Map.put(msg, :application_identifier, application_identifier)
+        Map.put(msg, :binary_data, binary_data)
+      else
+        <<binary_data::bitstring>> = bindata
+        Map.put(msg, :binary_data, binary_data)
+      end
 
     msg
-
   end
 
   # Message 28 to 63 are reserved for future use

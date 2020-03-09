@@ -15,10 +15,11 @@ defmodule NMEAAishubSampleTest do
       # IO.inspect(x)
       case AIS.parse(ais, x) do
         {a, {b, _}} ->
-         assert a == :error
-         assert b in [:incomplete]
+          assert a == :error
+          assert b in [:incomplete]
+
         {a, _} ->
-         assert a == :ok
+          assert a == :ok
       end
     end)
   end

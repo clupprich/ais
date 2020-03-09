@@ -8,11 +8,12 @@ defmodule AisMessageTypesTest do
                      assert AIS.get(ais) == []
 
                      Enum.each(msgs, fn x ->
-                      {result, sentence} = AIS.parse(ais, x)
-                      if result == :ok do
-                        assert result == :ok
-                        assert sentence == struct
-                      end
+                       {result, sentence} = AIS.parse(ais, x)
+
+                       if result == :ok do
+                         assert result == :ok
+                         assert sentence == struct
+                       end
                      end)
                    end do
     [
@@ -324,14 +325,14 @@ defmodule AisMessageTypesTest do
          checksum: "5A",
          current: "1",
          data: %{
-          dcdt_message_type: 9,
-          dcdt_station_id: 684,
-          dcdt_z_count: 3048,
-          dcdt_sequence_number: 7,
-          dcdt_n: 4,
-          dcdt_health: 0,
-          dcdt_dgnss_data_word: <<29, 254, 105, 1, 9, 23, 252, 150, 1, 28, 0::size(4)>>
-        },
+           dcdt_message_type: 9,
+           dcdt_station_id: 684,
+           dcdt_z_count: 3048,
+           dcdt_sequence_number: 7,
+           dcdt_n: 4,
+           dcdt_health: 0,
+           dcdt_dgnss_data_word: <<29, 254, 105, 1, 9, 23, 252, 150, 1, 28, 0::size(4)>>
+         },
          formatter: "VDM",
          latitude: 0.035618333333333335,
          longitude: 0.13989333333333334,
@@ -509,27 +510,32 @@ defmodule AisMessageTypesTest do
          vendor_id: ""
        }},
       # 25 (only fragmented messages)
-      {["!AIVDM,2,1,3,A,I`1ifG20UrcNTFE?UgLeo@Dk:o6G4hhI8;?vW2?El>Deju@c3Si451FJd9WPU<>B,0*04",
-      "!AIVDM,2,2,3,A,gML6TO918o:?6uoOFu3k@=vE,3*41"], %{
-        binary_data: <<128, 151, 170, 222, 145, 101, 79, 150, 247, 45, 221, 5, 51, 43, 113, 151, 19,
-        12, 25, 32, 179, 254, 156, 35, 213, 208, 229, 45, 203, 212, 43, 14, 60, 68,
-        20, 21, 154, 176, 153, 224, 148, 195, 146, 189, 215, 6, 145, 242, 65, 35, 114,
-        143, 27, 221, 223, 91, 208, 243, 64, 223, 149>>,
-        binary_data_flag: 0,
-        channel: "A",
-        checksum: "41",
-        current: "2",
-        destination_indicator: 0,
-        formatter: "VDM",
-        message_id: 25,
-        padding: "3",
-        payload: "I`1ifG20UrcNTFE?UgLeo@Dk:o6G4hhI8;?vW2?El>Deju@c3Si451FJd9WPU<>BgML6TO918o:?6uoOFu3k@=vE",
-        repeat_indicator: 2,
-        sequential: "3",
-        source_id: 538734172,
-        talker: "!AI",
-        total: "2"
-      }}
+      {[
+         "!AIVDM,2,1,3,A,I`1ifG20UrcNTFE?UgLeo@Dk:o6G4hhI8;?vW2?El>Deju@c3Si451FJd9WPU<>B,0*04",
+         "!AIVDM,2,2,3,A,gML6TO918o:?6uoOFu3k@=vE,3*41"
+       ],
+       %{
+         binary_data:
+           <<128, 151, 170, 222, 145, 101, 79, 150, 247, 45, 221, 5, 51, 43, 113, 151, 19, 12, 25,
+             32, 179, 254, 156, 35, 213, 208, 229, 45, 203, 212, 43, 14, 60, 68, 20, 21, 154, 176,
+             153, 224, 148, 195, 146, 189, 215, 6, 145, 242, 65, 35, 114, 143, 27, 221, 223, 91,
+             208, 243, 64, 223, 149>>,
+         binary_data_flag: 0,
+         channel: "A",
+         checksum: "41",
+         current: "2",
+         destination_indicator: 0,
+         formatter: "VDM",
+         message_id: 25,
+         padding: "3",
+         payload:
+           "I`1ifG20UrcNTFE?UgLeo@Dk:o6G4hhI8;?vW2?El>Deju@c3Si451FJd9WPU<>BgML6TO918o:?6uoOFu3k@=vE",
+         repeat_indicator: 2,
+         sequential: "3",
+         source_id: 538_734_172,
+         talker: "!AI",
+         total: "2"
+       }}
     ]
   end
 end
