@@ -25,6 +25,7 @@ defmodule AIS.Payload do
         {:invalid, %{}}
       end
     end
+
     if message_id in [5, 23] do
       if padding != 2 do
         {:invalid, %{}}
