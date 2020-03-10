@@ -38,7 +38,7 @@ defmodule AIS.Payload do
     rescue
       e in MatchError ->
         IO.puts(
-          "Error decoding message type #{message_id} '#{orig_payload}': " <> Exception.message(e)
+          "Error decoding message type #{message_id} '#{orig_payload}': " <> Exception.message(e) <> Exception.format_stacktrace(nil)
         )
 
         {:invalid, %{}}
