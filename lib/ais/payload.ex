@@ -6,18 +6,30 @@ defmodule AIS.Payload do
   @doc """
   Parse an AIS payload.
 
-  Takes a `bitstring()` and return `{:ok, Map}` when decoding succeede, or `{:invalid, %{}}`.
+  Takes a `bitstring()` payload and `non_neg_integer()` padding and return `{:ok, Map}` when decoding succeede, or `{:invalid, %{}}`.
   """
 
   # See https://www.itu.int/dms_pubrec/itu-r/rec/m/R-REC-M.1371-1-200108-S!!PDF-E.pdf
   # for packet formats
 
-  @spec parse(binary()) :: {:invalid, %{}} | {:ok, any()}
-  def parse(payload) do
+  @spec parse(binary(), non_neg_integer()) :: {:invalid, %{}} | {:ok, any()}
+  def parse(payload, padding) do
     orig_payload = payload
     payload = SixBit.decode(payload)
 
     <<message_id::6, tail::bitstring>> = payload
+
+    # Any payload with a bad padding is invalid, check it before even trying to parse it
+    if message_id in [1, 2, 3, 4, 9, 10, 11, 18, 19, 22, 27] do
+      if padding != 0 do
+        {:invalid, %{}}
+      end
+    end
+    if message_id in [5, 23] do
+      if padding != 2 do
+        {:invalid, %{}}
+      end
+    end
 
     try do
       attributes = parse_message(message_id, tail)

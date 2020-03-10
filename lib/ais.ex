@@ -44,7 +44,7 @@ defmodule AIS do
         {:error, sentence}
 
       sentence[:total] == "1" ->
-        {state, attributes} = AIS.Payload.parse(sentence.payload)
+        {state, attributes} = AIS.Payload.parse(sentence.payload, sentence.padding)
         sentence = Map.merge(attributes, sentence)
 
         if state != :ok do
@@ -62,7 +62,7 @@ defmodule AIS do
             {payload, first_sentence.payload <> payload}
           end)
 
-        {state, attributes} = AIS.Payload.parse(sentence.payload)
+        {state, attributes} = AIS.Payload.parse(sentence.payload, sentence.padding)
         sentence = Map.merge(attributes, sentence)
 
         if state != :ok do
