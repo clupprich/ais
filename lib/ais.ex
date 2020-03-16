@@ -35,7 +35,7 @@ defmodule AIS do
       {:error, {:invalid, %{channel: "A", checksum: "5E", current: "1", formatter: "VDM", padding: "0", payload: "59N`1sT2<iHtCEAc@00m<>0Hh4lT", sequential: "", talker: "!AI", total: "1"}}}
   """
   @spec parse(pid(), binary() | String.t()) ::
-          {:ok, Map} | {:error, {:invalid_checksum, Map}} | {:error, {:invalid, Map}}
+          {:ok, Map} | {:error, {:invalid_checksum, Map}} | {:error, {:invalid, Map}} | {:incomplete, {:invalid, Map}}
   def parse(pid, string) do
     {state, sentence} = NMEA.parse(string)
 
